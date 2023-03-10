@@ -3,7 +3,6 @@ import React from "react";
 
 interface NavProps {
   className: string;
-  ariaHidden: string;
 }
 
 const navigation = [

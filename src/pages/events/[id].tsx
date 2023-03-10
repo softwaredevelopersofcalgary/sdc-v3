@@ -1,4 +1,5 @@
 import EventDetailHeader from "@/components/EventDetailHeader/EventDetailHeader";
+import { ProjectModel } from "@/components/ProjectCards/Project.model";
 import ProjectCards from "@/components/ProjectCards/ProjectCards";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import { api } from "@/utils/api";
@@ -13,7 +14,6 @@ export default function EventDetailPage() {
     },
     { enabled: !!router.query.id }
   );
-  console.log("🚀 ~ file: [id].tsx:16 ~ EventDetailPage ~ event:", event.data);
 
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
   if (event.isLoading)
@@ -28,7 +28,9 @@ export default function EventDetailPage() {
         location={event.data?.location}
         startTime={event.data?.startTime}
       />
-      <ProjectCards projects={event.data?.projects} />
+      <ProjectCards
+        projects={event.data?.projects as unknown as ProjectModel[]}
+      />
     </div>
   );
 }

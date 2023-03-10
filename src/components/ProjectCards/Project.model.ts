@@ -1,6 +1,4 @@
-import { Tech } from "../TechTagRow/TechTag/tech.model";
-
-export interface Project {
+export interface ProjectModel {
   id: string;
   name: string;
   description: string;
@@ -10,7 +8,7 @@ export interface Project {
   authorId: string;
   createdAt: string;
   updatedAt: string;
-  techs: Tech[];
+  techs: Tech2[];
   author: Author;
   _count: Count;
 }
@@ -23,4 +21,15 @@ interface Author {
   id: string;
   email: string;
   name: string;
+}
+
+export interface Tech2 {
+  id: string;
+  projectId: string;
+  masterTechId: string;
+  tech: Tech;
+}
+
+export interface Tech {
+  label: string;
 }

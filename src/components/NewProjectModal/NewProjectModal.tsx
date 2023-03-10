@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
@@ -45,10 +47,6 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
   });
 
   const onSubmit = async (data: ProjectCreateSubmitProps) => {
-    console.log(
-      "🚀🚀🚀🚀🚀🚀 ~ file: NewProjectModal.tsx:48 ~ onSubmit ~ data:",
-      data
-    );
     const userId = session?.data?.user?.id;
     const newProjectObj = {
       name: data.title,
@@ -58,6 +56,7 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
       eventId: eventUuid?.toString() || "",
     };
     await createProject(newProjectObj);
+    return;
   };
 
   if (isLoading) return null;
@@ -96,6 +95,7 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div className="mt-5 md:col-span-2 md:mt-0">
+                  {/* @ts-ignore */}
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="overflow-hidden shadow sm:rounded-md">
                       <div className="bg-white px-4 py-5 sm:p-6">

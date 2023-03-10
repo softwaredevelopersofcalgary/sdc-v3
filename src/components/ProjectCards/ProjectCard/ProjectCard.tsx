@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
@@ -5,17 +6,13 @@ import { HandThumbUpIcon as HandThumbUpIconSolid } from "@heroicons/react/24/sol
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import TechTagRow from "../../TechTagRow/TechTagRow";
-import { Project } from "@prisma/client";
+import { ProjectModel } from "../Project.model";
 
 interface ProjectCardProps {
-  project: Project;
+  project: ProjectModel;
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  console.log(
-    "🚀 ~ file: ProjectCard.tsx:15 ~ ProjectCard ~ project:",
-    project
-  );
   const utils = api.useContext();
   const user = useUserSession();
 
@@ -50,7 +47,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div
       key={project.name}
-      className="flex flex-col overflow-hidden rounded-lg shadow-lg"
+      className="flex w-full flex-col overflow-hidden rounded-lg shadow-lg"
     >
       <div className="flex flex-1 flex-col justify-between bg-white p-6">
         <div className="flex-1">
