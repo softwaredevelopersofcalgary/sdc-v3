@@ -81,4 +81,30 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
+
+  createComment: protectedProcedure
+    .input(
+      z.object({
+        comment: z.string(),
+        projectId: z.string(),
+        authorId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.comment.create({
+        data: {
+          comment: input.comment,
+          project: {
+            connect: {
+              id: input.projectId,
+            },
+          },
+          user: {
+            connect: {
+              id: input.authorId,
+            },
+          },
+        },
+      });
+    }),
 });

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
 import PillButton from "@/components/atoms/PillButton/PillButton";
+import CommentTextArea from "@/components/CommentTextArea/CommentTextArea";
 
 interface ProjectCardProps {
   project: ProjectModel;
@@ -105,6 +106,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <div>{project._count?.likes ?? 0} Likes</div>
           </div>
         </div>
+        <CommentTextArea />
       </div>
     </div>
   );

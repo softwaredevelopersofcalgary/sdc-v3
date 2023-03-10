@@ -39,7 +39,7 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
   const { handleSubmit, register } = useForm();
   const { mutateAsync: createProject } = api.projects.create.useMutation({
     onSuccess: (data) => {
-      alert("Project created successfully!");
+      setIsOpen(false);
       return utils.events.findUnique.invalidate({
         id: data?.eventId,
       });
