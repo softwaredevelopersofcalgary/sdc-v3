@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
+import PillButton from "@/components/atoms/PillButton/PillButton";
 
 interface ProjectCardProps {
   project: ProjectModel;
@@ -64,14 +65,21 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
         </div>
         <div className="mt-6 flex flex-row items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-900">
-              {/* {hideEmailBetter(project.author?.email) ?? "No Name"} */}
-              {project.author.name}
-            </p>
-            <div className="flex space-x-1 text-sm text-gray-500">
-              <div>{format(new Date(project.createdAt), "MMMM dd, yyyy")}</div>
+          <div className="flex flex-row items-center gap-10">
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                {project.author.name}
+              </p>
+              <div className="flex space-x-1 text-sm text-gray-500">
+                <div>
+                  {format(new Date(project.createdAt), "MMMM dd, yyyy")}
+                </div>
+              </div>
             </div>
+            <PillButton
+              label="Join Project"
+              handleClick={() => alert("Joining")}
+            />
           </div>
           <div className="flex flex-col items-center justify-center">
             <motion.div
