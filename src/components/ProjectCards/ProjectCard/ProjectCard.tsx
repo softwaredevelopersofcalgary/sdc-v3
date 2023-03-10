@@ -131,14 +131,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <div>{project._count?.likes ?? 0} Likes</div>
           </div>
         </div>
-        <div className="pt-4">
-          <CommentTextArea
-            handleSubmit={handleSubmit}
-            register={register}
-            onSubmit={onCommentSubmit}
-            rows={2}
-          />
-        </div>
+        {user && (
+          <div className="pt-4">
+            <CommentTextArea
+              handleSubmit={handleSubmit}
+              register={register}
+              onSubmit={onCommentSubmit}
+              rows={2}
+            />
+          </div>
+        )}
         {project.comments?.map((comment) => (
           <CommentBubble
             key={comment.id}

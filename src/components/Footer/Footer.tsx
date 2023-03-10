@@ -87,8 +87,8 @@ const Footer = () => {
         </div>
         <div className="mt-8 md:order-1 md:mt-0">
           <p className="text-center text-base text-gray-400">
-            &copy; {format(new Date(), "yyyy")} Software Developers Calgary, All
-            rights reserved.
+            &copy; {format(new Date(), "yyyy")} Rocket Punch Studios, All rights
+            reserved.
           </p>
         </div>
       </div>
