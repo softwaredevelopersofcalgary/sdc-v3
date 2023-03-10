@@ -1,0 +1,124 @@
+import { Disclosure } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import useUserSession from "@/hooks/useUserSession";
+import classNames from "@/helpers/classNames";
+import currentRouteIsActive from "@/helpers/currentRouteIsActive";
+import { signIn, signOut } from "next-auth/react";
+
+// export default ({ email }) => (
+//   <button onClick={() => signIn("email", { email })}>Sign in with Email</button>
+// )
+
+const navigation = [
+  { name: "Home", href: "/", current: false },
+  { name: "Events", href: "/events", current: false },
+  { name: "Projects", href: "/projects", current: false },
+  { name: "Join Us", href: "/join", current: false },
+];
+
+export default function NavBar() {
+  const router = useRouter();
+  const user = useUserSession();
+  const pathname = router.pathname;
+
+  const handleButtonClick = () => {
+    return user ? signOut() : signIn();
+  };
+
+  return (
+    <Disclosure as="nav" className="bg-white shadow">
+      {({ open }) => (
+        <>
+          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+            <div className="relative flex h-16 justify-between">
+              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                {/* Mobile menu button */}
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-800">
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </Disclosure.Button>
+              </div>
+              <div className="flex flex-1 items-center justify-between sm:items-stretch sm:justify-start">
+                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                  <div className="flex flex-shrink-0 items-center">
+                    <img
+                      className="block h-8 w-auto lg:hidden"
+                      src="https://user-images.githubusercontent.com/47466645/194220749-19cff7cf-65d1-4019-84f3-b08669817b0b.png"
+                      alt="SDC"
+                    />
+                    <img
+                      className="hidden h-8 w-auto lg:block"
+                      src="https://user-images.githubusercontent.com/47466645/194220749-19cff7cf-65d1-4019-84f3-b08669817b0b.png"
+                      alt="SDC"
+                    />
+                  </div>
+                  <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    {/* Current: "border-gray-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+                    {navigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={classNames(
+                          currentRouteIsActive(pathname, item.href)
+                            ? "border-gray-500  text-gray-900"
+                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                <div className="hidden sm:flex sm:flex-col sm:justify-center">
+                  <button
+                    type="button"
+                    className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    onClick={() => void handleButtonClick()}
+                  >
+                    {user ? "Logout" : "Login"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Disclosure.Panel className="sm:hidden">
+            <div className="space-y-1 pt-2 pb-4">
+              {/* Current: "bg-gray-50 border-gray-500 text-gray-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
+              {navigation.map((item) => (
+                <Disclosure.Button
+                  key={item.name}
+                  as="a"
+                  href={item.href}
+                  className={classNames(
+                    currentRouteIsActive(pathname, item.href)
+                      ? "border-gray-500 bg-gray-50 text-gray-700"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
+                    "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
+                  )}
+                >
+                  {item.name}
+                </Disclosure.Button>
+              ))}
+              <Disclosure.Button
+                as="a"
+                onClick={() => void handleButtonClick()}
+                className="block border-l-4 border-transparent py-2 pl-3
+                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+              >
+                {user ? "Logout!" : "Login"}
+              </Disclosure.Button>
+            </div>
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
+  );
+}
