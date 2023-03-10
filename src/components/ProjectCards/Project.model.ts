@@ -10,6 +10,7 @@ export interface ProjectModel {
   updatedAt: string;
   techs: Tech2[];
   author: Author;
+  comments: Comment[];
   _count: Count;
 }
 
@@ -32,4 +33,20 @@ export interface Tech2 {
 
 export interface Tech {
   label: string;
+}
+
+interface Comment {
+  id: string;
+  comment: string;
+  projectId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  user: User;
+}
+
+interface User {
+  id: string;
+  name: string;
+  image: string;
 }

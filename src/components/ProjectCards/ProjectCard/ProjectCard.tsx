@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import CommentBubble from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
+import CommentTextArea, {
+  CommentTextAreaValues,
+} from "@/components/Comments/CommentTextArea/CommentTextArea";
+import PillButton from "@/components/atoms/PillButton/PillButton";
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import { HandThumbUpIcon as HandThumbUpIconSolid } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
-import PillButton from "@/components/atoms/PillButton/PillButton";
-import CommentTextArea from "@/components/CommentTextArea/CommentTextArea";
 
 interface ProjectCardProps {
   project: ProjectModel;
@@ -17,6 +21,27 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   const utils = api.useContext();
   const user = useUserSession();
+
+  const { handleSubmit, register, reset } = useForm();
+  const { mutateAsync: createComment } = api.projects.createComment.useMutation(
+    {
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+    }
+  );
+
+  const onCommentSubmit = async (data: CommentTextAreaValues) => {
+    await createComment({
+      comment: data.comment,
+      projectId: project.id,
+      authorId: user?.id || "",
+    });
+
+    reset();
+  };
 
   const { mutateAsync } = api.likes.create.useMutation({
     onSuccess: async () => {
@@ -106,7 +131,23 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <div>{project._count?.likes ?? 0} Likes</div>
           </div>
         </div>
-        <CommentTextArea />
+        <div className="pt-4">
+          <CommentTextArea
+            handleSubmit={handleSubmit}
+            register={register}
+            onSubmit={onCommentSubmit}
+            rows={2}
+          />
+        </div>
+        {project.comments?.map((comment) => (
+          <CommentBubble
+            key={comment.id}
+            image={comment.user?.image}
+            username={comment.user.name}
+            createdAt={comment.createdAt}
+            comment={comment.comment}
+          />
+        ))}
       </div>
     </div>
   );

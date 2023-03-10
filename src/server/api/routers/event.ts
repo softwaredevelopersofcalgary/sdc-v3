@@ -40,6 +40,20 @@ export const eventRouter = createTRPCRouter({
                   },
                 },
               },
+              comments: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+              },
               author: {
                 select: {
                   id: true,
