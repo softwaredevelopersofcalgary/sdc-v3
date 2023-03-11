@@ -23,6 +23,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "daisyui": "^2.51.3",
     "date-fns": "^2.29.3",
     "framer-motion": "^10.2.3",
     "next": "^13.2.1",

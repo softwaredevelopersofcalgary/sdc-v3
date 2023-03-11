@@ -12,6 +12,14 @@ export interface ProjectModel {
   author: Author;
   comments: Comment[];
   _count: Count;
+  isMember?: boolean;
+  isUserPartOfAnyProject?: boolean;
+  members?: Member[];
+}
+
+export interface Member {
+  id: string;
+  name: string;
 }
 
 interface Count {

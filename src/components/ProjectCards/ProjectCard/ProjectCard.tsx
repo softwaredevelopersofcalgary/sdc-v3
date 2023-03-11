@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import CommentBubble from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
 import CommentTextArea, {
@@ -13,12 +14,17 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
+import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
 
 interface ProjectCardProps {
   project: ProjectModel;
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
+  console.log(
+    "🚀🚀🚀 ~ file: ProjectCard.tsx:23 ~ ProjectCard ~ project:",
+    project
+  );
   const utils = api.useContext();
   const user = useUserSession();
 
@@ -64,6 +70,32 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     }
   );
 
+  const { mutateAsync: joinProject } = api.projects.joinProject.useMutation({
+    onSuccess: async () => {
+      alert("Joined Project");
+    },
+  });
+
+  const { mutateAsync: leaveProject } = api.projects.leaveProject.useMutation({
+    onSuccess: async () => {
+      alert("Left Project");
+    },
+  });
+
+  const handleJoinProject = async () => {
+    await joinProject({
+      projectId: project.id,
+      userId: user?.id || "",
+    });
+  };
+
+  const handleLeaveProject = async () => {
+    await leaveProject({
+      projectId: project.id,
+      userId: user?.id || "",
+    });
+  };
+
   const handleUpvote = async () => {
     await mutateAsync({
       projectId: project.id,
@@ -73,7 +105,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <div
-      key={project.name}
+      key={project.id}
       className="flex w-full flex-col overflow-hidden rounded-lg shadow-lg"
     >
       <div className="flex flex-1 flex-col justify-between bg-white p-6">
@@ -85,6 +117,22 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <p className="py-2">
               <TechTagRow techs={project.techs} />
             </p>
+            <p className="py-2">
+              <PillButton
+                label={project.isMember ? "Leave Project" : "Join Project"}
+                isMember={project?.isMember}
+                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                handleClick={
+                  project?.isMember ? handleLeaveProject : handleJoinProject
+                }
+              />
+            </p>
+            {project.members && project.members?.length > 0 && (
+              <p className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
+                <span className="font-bold">Members:</span>
+                <MemberTagRow members={project?.members} />
+              </p>
+            )}
             <p className="mt-3 text-base text-gray-500">
               {project.description}
             </p>
@@ -102,10 +150,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </div>
               </div>
             </div>
-            <PillButton
-              label="Join Project"
-              handleClick={() => alert("Joining")}
-            />
           </div>
           <div className="flex flex-col items-center justify-center">
             <motion.div
