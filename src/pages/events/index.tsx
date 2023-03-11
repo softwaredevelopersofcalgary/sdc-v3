@@ -1,17 +1,33 @@
+import NewEventModal from "@/components/NewEventModal/NewEventModal";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
+import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
 import { format } from "date-fns";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
-export default function events() {
+export default function EventsPage() {
+  const [isOpen, setIsOpen] = useState(false);
   const { isError, data, isLoading, error } = api.events.getAll.useQuery();
+  const user = useUserSession();
 
   if (isError) return <div>{JSON.stringify(error)}</div>;
   if (isLoading) return <StyledCircleLoader isLoading={isLoading} />;
 
   return (
     <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
+      <NewEventModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      {user && (
+        <div className="flex flex-row items-center justify-end">
+          <button
+            type="button"
+            className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            onClick={() => setIsOpen(true)}
+          >
+            New Event
+          </button>
+        </div>
+      )}
       <div className="mt-6 grid gap-16 pt-10 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-12">
         {data?.map((post) => (
           <Link href={`/events/${post.id}`} key={post.id}>
