@@ -21,10 +21,6 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  console.log(
-    "🚀🚀🚀 ~ file: ProjectCard.tsx:23 ~ ProjectCard ~ project:",
-    project
-  );
   const utils = api.useContext();
   const user = useUserSession();
 
@@ -72,13 +68,17 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   const { mutateAsync: joinProject } = api.projects.joinProject.useMutation({
     onSuccess: async () => {
-      alert("Joined Project");
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
     },
   });
 
   const { mutateAsync: leaveProject } = api.projects.leaveProject.useMutation({
     onSuccess: async () => {
-      alert("Left Project");
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
     },
   });
 
