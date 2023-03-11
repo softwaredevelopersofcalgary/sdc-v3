@@ -107,4 +107,26 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
+
+  joinProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          projects: {
+            connect: {
+              id: input.projectId,
+            },
+          },
+        },
+      });
+    }),
 });

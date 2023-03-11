@@ -62,6 +62,8 @@ model User {
   likes         Like[]
   role          Role      @default(USER)
   Comment       Comment[]
+
+  memberOfProjects Project[] @relation("ProjectMembers")
 }
 
 enum Role {
@@ -103,6 +105,7 @@ model Project {
   eventId     String
   event       Event   @relation(fields: [eventId], references: [id])
   techs       Tech[]
+  members     User[]  @relation("ProjectMembers")
 
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
