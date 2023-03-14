@@ -63,11 +63,18 @@ model User {
   role          Role      @default(USER)
   Comment       Comment[]
 
+  title    String?
+  twitter  String?
+  github   String?
+  linkedin String?
+  website  String?
+
   memberOfProjects Project[] @relation("ProjectMembers")
 }
 
 enum Role {
   ADMIN
+  MOD
   USER
 }
 

@@ -11,8 +11,8 @@ export default function EventsPage() {
   const { isError, data, isLoading, error } = api.events.getAll.useQuery();
   const user = useUserSession();
 
-  if (isError) return <div>{JSON.stringify(error)}</div>;
   if (isLoading) return <StyledCircleLoader isLoading={isLoading} />;
+  if (isError) return <div>{JSON.stringify(error)}</div>;
 
   return (
     <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
