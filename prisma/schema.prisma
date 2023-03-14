@@ -71,6 +71,8 @@ model User {
   website  String?
 
   memberOfProjects Project[] @relation("ProjectMembers")
+
+  
 }
 
 enum Role {
@@ -113,6 +115,8 @@ model Project {
   eventId     String
   event       Event   @relation(fields: [eventId], references: [id])
   techs       Tech[]
+  
+
   members     User[]  @relation("ProjectMembers")
 
   author   User?   @relation(fields: [authorId], references: [id])

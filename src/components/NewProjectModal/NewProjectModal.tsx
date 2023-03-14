@@ -141,7 +141,7 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
                                 </span>
                               )}
                               filterSelectedOptions
-                              renderInput={(params: any) => (
+                              renderInput={(params) => (
                                 <TextField
                                   {...params}
                                   label="Tech for this project"

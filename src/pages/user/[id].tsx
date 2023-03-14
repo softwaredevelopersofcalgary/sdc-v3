@@ -2,8 +2,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import UserForm from "@/components/UserForm/UserForm";
+import UserTechsModal from "@/components/UserTechsModal/UserTechsModal";
 import { api } from "@/utils/api";
+import { Autocomplete, TextField } from "@mui/material";
+import { MasterTech } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 export interface ProfileEditProps {
   title: string;
@@ -15,7 +20,11 @@ export interface ProfileEditProps {
 
 export default function UserDetail() {
   const router = useRouter();
+  const utils = api.useContext();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>([]);
 
+  const techs = api.techs.getAll.useQuery();
   const { mutateAsync: updateUser } = api.users.update.useMutation({
     onSuccess: async () => {
       await utils.users.getById.invalidate({
@@ -36,17 +45,28 @@ export default function UserDetail() {
       enabled: !!router.query.id,
     }
   );
-
-  const utils = api.useContext();
+  console.log("🚀🚀 ~ file: [id].tsx:32 ~ UserDetail ~ userData:", userData);
 
   const onSubmit = async (data: ProfileEditProps) => {
+    console.log(
+      "🚀🚀🚀🚀 ~ file: [id].tsx:25 ~ UserDetail ~ selectedTechs:",
+      selectedTechs
+    );
+
     await updateUser({
       id: router.query.id as string,
-      ...data,
+      title: data.title,
+      github: data.github,
+      twitter: data.twitter,
+      linkedin: data.linkedin,
+      website: data.website,
+      techs: selectedTechs.map((tech: MasterTech) => tech.id),
     });
   };
 
-  if (isLoading) return <StyledCircleLoader isLoading={isLoading} />;
+  if (isLoading || techs.isLoading)
+    return <StyledCircleLoader isLoading={isLoading} />;
+  if (isError || techs.isError) return <div>Error!!</div>;
 
   return (
     <div className="flex flex-col items-center justify-center pt-10">
@@ -162,7 +182,16 @@ export default function UserDetail() {
             Use a permanent address where you can receive mail.
           </p>
         </div>
-        <UserForm user={userData} onSubmit={onSubmit} />
+        <UserForm user={userData} onSubmit={onSubmit} setIsOpen={setIsOpen} />
+        <UserTechsModal
+          userId={userData?.id}
+          ogTechs={userData?.techs}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          data={techs?.data}
+          selectedTechs={selectedTechs}
+          setSelectedTechs={setSelectedTechs}
+        />
       </div>
     </div>
   );

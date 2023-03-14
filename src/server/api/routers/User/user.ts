@@ -13,6 +13,18 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          techs: {
+            select: {
+              id: true,
+              tech: {
+                select: {
+                  label: true,
+                },
+              },
+            },
+          },
+        },
       });
     }),
 
@@ -20,25 +32,52 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        title: z.string(),
-        github: z.string(),
-        twitter: z.string(),
-        linkedin: z.string(),
-        website: z.string(),
+        title: z.string().optional(),
+        github: z.string().optional(),
+        twitter: z.string().optional(),
+        linkedin: z.string().optional(),
+        website: z.string().optional(),
+        techs: z.array(z.string()).optional(),
+        ogTechs: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("🚀🚀🚀🚀 ~ file: user.ts:31 ~ .mutation ~ input:", input);
       return await ctx.prisma.user.update({
         where: {
           id: input.id,
         },
         data: {
-          title: input.title,
-          github: input.github,
-          twitter: input.twitter,
-          linkedin: input.linkedin,
-          website: input.website,
+          ...(input.title && {
+            title: input.title,
+          }),
+          ...(input.github && {
+            github: input.github,
+          }),
+          ...(input.twitter && {
+            twitter: input.twitter,
+          }),
+          ...(input.linkedin && {
+            linkedin: input.linkedin,
+          }),
+          ...(input.website && {
+            website: input.website,
+          }),
+          ...(input.techs &&
+            input.ogTechs && {
+              techs: {
+                connectOrCreate: input.techs.map((tech) => ({
+                  where: {
+                    id: tech,
+                  },
+                  create: {
+                    masterTechId: tech,
+                  },
+                })),
+                disconnect: input.ogTechs.map((tech) => ({
+                  id: tech,
+                })),
+              },
+            }),
         },
       });
     }),

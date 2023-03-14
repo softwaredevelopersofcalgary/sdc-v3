@@ -1,16 +1,29 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ProfileEditProps } from "@/pages/user/[id]";
+import { api } from "@/utils/api";
 import { User } from "@prisma/client";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 
 interface UserFormProps {
-  user: User | undefined | null;
+  user:
+    | (User & {
+        techs: {
+          id: string;
+          tech: {
+            label: string;
+          };
+        }[];
+      })
+    | null;
   onSubmit: (data: ProfileEditProps) => Promise<void>;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function UserForm({ user, onSubmit }: UserFormProps) {
+export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
+  const utils = api.useContext();
+
   const { handleSubmit, register } = useForm<ProfileEditProps>({
     defaultValues: {
       title: user?.title || "",
@@ -20,6 +33,11 @@ export default function UserForm({ user, onSubmit }: UserFormProps) {
       website: user?.website || "",
     },
   });
+
+  const handleTechEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsOpen(true);
+  };
 
   return (
     <form
@@ -120,6 +138,27 @@ export default function UserForm({ user, onSubmit }: UserFormProps) {
           />
         </div>
       </div>
+
+      <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+        <label
+          htmlFor="techs"
+          className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
+        >
+          Techs
+        </label>
+        <div className="mt-2 sm:col-span-2 sm:mt-0">
+          {user?.techs.map((tech) => (
+            <span key={tech.id}>{tech.tech.label}</span>
+          ))}
+          <button
+            className="rounded-md bg-gray-700 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-900"
+            onClick={handleTechEdit}
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+
       <div className="flex justify-end">
         <button
           type="submit"
