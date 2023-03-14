@@ -62,6 +62,7 @@ model User {
   likes         Like[]
   role          Role      @default(USER)
   Comment       Comment[]
+  techs         Tech[]
 
   title    String?
   twitter  String?
@@ -130,6 +131,8 @@ model Tech {
   project      Project?   @relation(fields: [projectId], references: [id])
   projectId    String?
   masterTechId String
+  User         User?      @relation(fields: [userId], references: [id])
+  userId       String?
 }
 
 model MasterTech {
