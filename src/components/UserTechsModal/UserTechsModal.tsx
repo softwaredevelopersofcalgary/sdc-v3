@@ -4,7 +4,7 @@
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { Autocomplete, TextField } from "@mui/material";
-import { Tech, type MasterTech } from "@prisma/client";
+import { type MasterTech } from "@prisma/client";
 import Image from "next/image";
 import { Fragment, useRef, type Dispatch, type SetStateAction } from "react";
 

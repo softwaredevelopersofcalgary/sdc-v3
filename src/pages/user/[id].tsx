@@ -4,9 +4,7 @@ import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoad
 import UserForm from "@/components/UserForm/UserForm";
 import UserTechsModal from "@/components/UserTechsModal/UserTechsModal";
 import { api } from "@/utils/api";
-import { Autocomplete, TextField } from "@mui/material";
 import { MasterTech } from "@prisma/client";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ProfileEditProps } from "@/pages/user/[id]";
-import { api } from "@/utils/api";
 import { User } from "@prisma/client";
 import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
@@ -22,8 +21,6 @@ interface UserFormProps {
 }
 
 export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
-  const utils = api.useContext();
-
   const { handleSubmit, register } = useForm<ProfileEditProps>({
     defaultValues: {
       title: user?.title || "",
