@@ -1,66 +1,38 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { createEventInput } from "@/server/api/routers/Event/event.schema";
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
-import { Autocomplete, TextField } from "@mui/material";
-import { type MasterTech } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import {
-  type Dispatch,
-  Fragment,
-  type SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import React, { Dispatch, Fragment, SetStateAction, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-interface Props {
+interface NewEventModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-interface ProjectCreateSubmitProps {
-  title: string;
-  description: string;
-}
-
-export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
-  const router = useRouter();
-  const utils = api.useContext();
-  const { id: eventUuid } = router.query;
-  const session = useSession();
-  const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>([]);
-  const cancelButtonRef = useRef(null);
-  const { data, isLoading, isError } = api.techs.getAll.useQuery();
-
+export default function NewEventModal({
+  isOpen,
+  setIsOpen,
+}: NewEventModalProps) {
   const { handleSubmit, register } = useForm();
-  const { mutateAsync: createProject } = api.projects.create.useMutation({
-    onSuccess: (data) => {
+  const utils = api.useContext();
+
+  const cancelButtonRef = useRef(null);
+  const { mutateAsync: createEvent } = api.events.create.useMutation({
+    onSuccess: async () => {
+      await utils.events.getAll.invalidate();
       setIsOpen(false);
-      return utils.events.findUnique.invalidate({
-        id: data?.eventId,
-      });
     },
   });
 
-  const onSubmit = async (data: ProjectCreateSubmitProps) => {
-    const userId = session?.data?.user?.id;
-    const newProjectObj = {
-      name: data.title,
-      description: data.description,
-      techs: selectedTechs.map((tech: MasterTech) => tech.id),
-      authorId: userId || "",
-      eventId: eventUuid?.toString() || "",
-    };
-    await createProject(newProjectObj);
-    return;
+  const onSubmit = async (data: createEventInput) => {
+    await createEvent({
+      ...data,
+      date: new Date(data.date),
+    });
   };
-
-  if (isLoading) return null;
-  if (isError) return <div>Error!!</div>;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -102,52 +74,37 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
                         <div className="flex flex-col gap-6">
                           <div className="col-span-6 sm:col-span-3 ">
                             <label
-                              htmlFor="title"
+                              htmlFor="name"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Title
+                              Event Name
                             </label>
                             <input
                               type="text"
-                              id="title"
-                              {...register("title", {
+                              id="name"
+                              {...register("name", {
                                 required: true,
                               })}
-                              autoComplete="title"
+                              autoComplete="name"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                             />
                           </div>
 
-                          <div className="col-span-6 sm:col-span-3">
-                            <Autocomplete
-                              multiple
-                              id="tags-outlined"
-                              onChange={(_, value) => {
-                                return setSelectedTechs([...value]);
-                              }}
-                              options={data ?? []}
-                              renderOption={(params, option) => (
-                                <span
-                                  {...params}
-                                  className="flex cursor-pointer flex-row gap-4 p-4 hover:bg-gray-100"
-                                >
-                                  <Image
-                                    height={20}
-                                    width={25}
-                                    src={option.imgUrl}
-                                    alt=""
-                                  />
-                                  <div>{option.label}</div>
-                                </span>
-                              )}
-                              filterSelectedOptions
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  label="Tech for this project"
-                                  placeholder="html"
-                                />
-                              )}
+                          <div className="col-span-6 sm:col-span-3 ">
+                            <label
+                              htmlFor="location"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Location
+                            </label>
+                            <input
+                              type="text"
+                              id="location"
+                              {...register("location", {
+                                required: true,
+                              })}
+                              autoComplete="location"
+                              className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                             />
                           </div>
 
@@ -165,6 +122,41 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
                               id="description"
                               rows={4}
                               autoComplete="description"
+                              className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
+                            />
+                          </div>
+
+                          <div className="col-span-6">
+                            <label
+                              htmlFor="date"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Date
+                            </label>
+                            <input
+                              {...register("date", {
+                                required: true,
+                              })}
+                              id="date"
+                              type="date"
+                              className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
+                            />
+                          </div>
+
+                          <div className="col-span-6">
+                            <label
+                              htmlFor="date"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Start Time
+                            </label>
+                            <input
+                              {...register("startTime", {
+                                required: true,
+                              })}
+                              step={1800}
+                              id="startTime"
+                              type="time"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                             />
                           </div>

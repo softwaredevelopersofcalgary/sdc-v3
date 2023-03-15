@@ -2,8 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { z } from "zod";
+import { createEventSchema } from "./Event/event.schema";
 
 export const eventRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -78,8 +83,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      // Add a boolean to each project to indicate if the current user is a member of the project in this event. There will also be a boolean named isPartOfProject to show if the user is a part of any of the projects in this event
-
       if (currentUser) {
         const projectsWithUser = event?.projects?.map((project) => {
           const isMember = project?.members?.some(
@@ -105,23 +108,17 @@ export const eventRouter = createTRPCRouter({
         };
       }
 
-      // if (currentUser) {
-      //   const projectsWithUser = event?.projects?.map((project) => {
-      //     const isMember = project?.members?.some(
-      //       (member) => member.id === currentUser.id
-      //     );
+      return event;
+    }),
 
-      //     return {
-      //       ...project,
-      //       isMember,
-      //     };
-      //   });
-
-      //   return {
-      //     ...event,
-      //     projects: projectsWithUser,
-      //   };
-      // }
+  create: protectedProcedure
+    .input(createEventSchema)
+    .mutation(async ({ ctx, input }) => {
+      const event = await ctx.prisma.event.create({
+        data: {
+          ...input,
+        },
+      });
 
       return event;
     }),
