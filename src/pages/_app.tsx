@@ -7,6 +7,7 @@ import { api } from "@/utils/api";
 import "@/styles/globals.css";
 import NavBar from "@/components/NavBar/NavBar";
 import Footer from "@/components/Footer/Footer";
+import HeadTitle from "@/components/HeadTitle/HeadTitle";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -15,6 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <div className="h-screen">
+        <HeadTitle />
         <NavBar />
         <Component {...pageProps} />
         <Footer />

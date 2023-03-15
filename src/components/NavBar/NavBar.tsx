@@ -7,10 +7,6 @@ import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
 
-// export default ({ email }) => (
-//   <button onClick={() => signIn("email", { email })}>Sign in with Email</button>
-// )
-
 const navigation = [
   { name: "Home", href: "/", current: false },
   { name: "Events", href: "/events", current: false },
@@ -76,7 +72,32 @@ export default function NavBar() {
                     ))}
                   </div>
                 </div>
-                <div className="hidden sm:flex sm:flex-col sm:justify-center">
+                <div className="hidden items-center gap-4 sm:flex sm:flex-row sm:justify-center">
+                  {user && (
+                    <Link
+                      href={`/user/${user.id}`}
+                      className="group block flex-shrink-0"
+                    >
+                      <div className="flex items-center">
+                        <div>
+                          <img
+                            className="inline-block h-9 w-9 rounded-full"
+                            src={user.image || "/images/blank-avatar.png"}
+                            alt=""
+                          />
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                            {user.name}
+                          </p>
+                          <p className="text-xs font-medium text-gray-500 group-hover:text-gray-900">
+                            View profile
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+
                   <button
                     type="button"
                     className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
@@ -107,13 +128,23 @@ export default function NavBar() {
                   {item.name}
                 </Disclosure.Button>
               ))}
+              {user && (
+                <Disclosure.Button
+                  as="a"
+                  onClick={() => void router.push(`/user/${user.id}`)}
+                  className="block border-l-4 border-transparent py-2 pl-3
+                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+                >
+                  Profile
+                </Disclosure.Button>
+              )}
               <Disclosure.Button
                 as="a"
                 onClick={() => void handleButtonClick()}
                 className="block border-l-4 border-transparent py-2 pl-3
                   pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
               >
-                {user ? "Logout!" : "Login"}
+                {user ? "Logout" : "Login"}
               </Disclosure.Button>
             </div>
           </Disclosure.Panel>
