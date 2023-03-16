@@ -63,7 +63,19 @@ export const eventRouter = createTRPCRouter({
                     select: {
                       id: true,
                       name: true,
+                      title: true,
                       image: true,
+                      techs: {
+                        include: {
+                          tech: {
+                            select: {
+                              id: true,
+                              label: true,
+                              imgUrl: true,
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                 },
