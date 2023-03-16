@@ -1,6 +1,6 @@
 import NewEventModal from "@/components/NewEventModal/NewEventModal";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
-import { IsUserAdmin } from "@/hooks/isUserAdmin";
+import { IsUserEditor } from "@/hooks/IsUserEditor";
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
 import { format } from "date-fns";
@@ -11,7 +11,7 @@ export default function EventsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const { isError, data, isLoading, error } = api.events.getAll.useQuery();
   const user = useUserSession();
-  const userIsAdmin = IsUserAdmin();
+  const userIsEditor = IsUserEditor();
 
   if (isLoading) return <StyledCircleLoader isLoading={isLoading} />;
   if (isError) return <div>{JSON.stringify(error)}</div>;
@@ -19,7 +19,7 @@ export default function EventsPage() {
   return (
     <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
       <NewEventModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      {userIsAdmin && user && (
+      {userIsEditor && user && (
         <div className="flex flex-row items-center justify-end">
           <button
             type="button"
