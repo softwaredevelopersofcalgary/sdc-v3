@@ -14,7 +14,6 @@ export default function EventDetailPage() {
     },
     { enabled: !!router.query.id }
   );
-  console.log("🚀 ~ file: [id].tsx:17 ~ EventDetailPage ~ event:", event);
 
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
   if (event.isLoading)
