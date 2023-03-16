@@ -29,7 +29,7 @@ export default function UserTechsModal({
 }: UserTechsModalProps) {
   const cancelButtonRef = useRef(null);
   const utils = api.useContext();
-  const { mutateAsync: updateUser } = api.users.update.useMutation({
+  const { mutateAsync: updateUser, isLoading } = api.users.update.useMutation({
     onSuccess: async () => {
       await utils.users.getById.invalidate({
         id: userId,
@@ -122,6 +122,7 @@ export default function UserTechsModal({
                     <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                       <button
                         onClick={handleTechEdit}
+                        disabled={isLoading}
                         className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                       >
                         Save
