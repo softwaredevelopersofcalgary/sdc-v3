@@ -1,7 +1,7 @@
 import { api } from "@/utils/api";
 import useUserSession from "./useUserSession";
 
-export const IsUserAdmin = () => {
+export const IsUserEditor = () => {
   const user = useUserSession();
 
   if (!user?.id) return false;
@@ -15,5 +15,5 @@ export const IsUserAdmin = () => {
     }
   );
 
-  return userData?.data?.role === "ADMIN";
+  return userData?.data?.role === "ADMIN" || "MOD";
 };
