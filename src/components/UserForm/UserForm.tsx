@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ProfileEditProps } from "@/pages/user/[id]";
 import { User } from "@prisma/client";
+import Image from "next/image";
 import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 
@@ -12,6 +13,7 @@ interface UserFormProps {
           id: string;
           tech: {
             label: string;
+            imgUrl: string;
           };
         }[];
       })
@@ -136,17 +138,30 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
         </div>
       </div>
 
-      <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+      <div>
         <label
-          htmlFor="techs"
+          htmlFor="website"
           className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
         >
-          Techs
+          Tech Skills
         </label>
-        <div className="mt-2 sm:col-span-2 sm:mt-0">
-          {user?.techs.map((tech) => (
-            <span key={tech.id}>{tech.tech.label}</span>
-          ))}
+        <div className="mt-2 flex w-full flex-row items-center justify-between">
+          <div className="flex w-full max-w-xs flex-row flex-wrap items-center gap-2">
+            {user?.techs.map((tech) => (
+              <div
+                key={tech.id}
+                className="flex flex-row items-center gap-1 rounded-2xl border-[1px] border-gray-700 px-2 py-1"
+              >
+                <Image
+                  src={tech.tech.imgUrl}
+                  alt={tech.tech.label}
+                  width={15}
+                  height={15}
+                />
+                <span>{tech.tech.label}</span>
+              </div>
+            ))}
+          </div>
           <button
             className="rounded-md bg-gray-700 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-900"
             onClick={handleTechEdit}

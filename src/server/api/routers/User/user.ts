@@ -20,6 +20,7 @@ export const userRouter = createTRPCRouter({
               tech: {
                 select: {
                   label: true,
+                  imgUrl: true,
                 },
               },
             },
