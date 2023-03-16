@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { User } from "@prisma/client";
+import { format } from "date-fns";
 import Image from "next/image";
 import React from "react";
 
@@ -129,6 +133,12 @@ export default function UserCard({ userData }: UserCardProps) {
             alt={tech.tech.label}
           />
         ))}
+      </div>
+      <div className="m-4 flex flex-col items-center justify-center text-xs">
+        <span>Member since:</span>
+        {userData?.createdAt && (
+          <span>{format(new Date(userData?.createdAt), "PPP")}</span>
+        )}
       </div>
     </div>
   );
