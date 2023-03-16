@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import CommentBubble from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
@@ -205,6 +206,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             username={comment.user.name}
             createdAt={comment.createdAt}
             comment={comment.comment}
+            userTitle={comment.user.title}
+            userTechs={comment.user.techs}
           />
         ))}
       </div>

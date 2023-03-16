@@ -41,6 +41,8 @@ export interface Tech2 {
 
 export interface Tech {
   label: string;
+  id: string;
+  imgUrl: string;
 }
 
 interface Comment {
@@ -57,4 +59,6 @@ interface User {
   id: string;
   name: string;
   image: string;
+  title: string;
+  techs: Tech2[];
 }
