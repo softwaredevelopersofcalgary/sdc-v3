@@ -51,7 +51,7 @@ Here are the links to the official documentation for each technology:
 - [date-fns](https://date-fns.org/docs/)
 - [NextAuth.js](https://next-auth.js.org/getting-started/introduction)
 - [react-hook-form](https://react-hook-form.com/get-started/)
-- [zod](https://github.com/vriad/zod/tree/main/docs)
+- [zod](https://zod.dev/)
 
 ## Feedback
 
