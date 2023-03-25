@@ -5,6 +5,7 @@ interface PillButtonProps {
   handleClick: () => void;
   isMember: boolean | undefined;
   isUserPartOfAnyProject: boolean | undefined;
+  isLoading: boolean;
 }
 
 export default function PillButton({
@@ -12,6 +13,7 @@ export default function PillButton({
   handleClick,
   isMember,
   isUserPartOfAnyProject,
+  isLoading,
 }: PillButtonProps) {
   return (
     <button
@@ -25,7 +27,9 @@ export default function PillButton({
       disabled={isMember ? false : isUserPartOfAnyProject ? true : false}
       className={`
       ${
-        isMember
+        isLoading
+          ? "cursor-not-allowed"
+          : isMember
           ? "cursor-pointer border-gray-500 bg-gray-100 text-gray-800"
           : isUserPartOfAnyProject
           ? "cursor-not-allowed border-red-500 bg-red-100 text-red-800"

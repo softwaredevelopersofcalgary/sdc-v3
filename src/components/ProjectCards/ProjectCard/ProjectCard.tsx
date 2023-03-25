@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import CommentBubble from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
@@ -66,21 +67,23 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     }
   );
 
-  const { mutateAsync: joinProject } = api.projects.joinProject.useMutation({
-    onSuccess: async () => {
-      await utils.events.findUnique.invalidate({
-        id: project.eventId,
-      });
-    },
-  });
+  const { mutateAsync: joinProject, isLoading: joinProjectIsLoading } =
+    api.projects.joinProject.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+    });
 
-  const { mutateAsync: leaveProject } = api.projects.leaveProject.useMutation({
-    onSuccess: async () => {
-      await utils.events.findUnique.invalidate({
-        id: project.eventId,
-      });
-    },
-  });
+  const { mutateAsync: leaveProject, isLoading: leaveProjectIsLoading } =
+    api.projects.leaveProject.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+    });
 
   const handleJoinProject = async () => {
     await joinProject({
@@ -119,11 +122,22 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             </p>
             <p className="py-2">
               <PillButton
-                label={project.isMember ? "Leave Project" : "Join Project"}
+                label={
+                  joinProjectIsLoading || leaveProjectIsLoading
+                    ? "Loading..."
+                    : project.isMember
+                    ? "Leave Project"
+                    : "Join Project"
+                }
                 isMember={project?.isMember}
                 isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
                 handleClick={
-                  project?.isMember ? handleLeaveProject : handleJoinProject
+                  joinProjectIsLoading || leaveProjectIsLoading
+                    ? () => void null
+                    : project?.isMember
+                    ? handleLeaveProject
+                    : handleJoinProject
                 }
               />
             </p>
@@ -192,6 +206,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             username={comment.user.name}
             createdAt={comment.createdAt}
             comment={comment.comment}
+            userTitle={comment.user.title}
+            userTechs={comment.user.techs}
           />
         ))}
       </div>
