@@ -38,6 +38,14 @@ To contribute to this project, follow these steps:
 9. Make any necessary changes based on the feedback, and push them to your branch.
 10. Repeat steps 8 and 9 until your pull request is accepted and merged into the main repository.
 
+To link a pull request from a forked repository to the original repository's issue, you can use a special syntax in the pull request's description or comments. Here are the steps to do this:
+
+1. In the pull request's description or comments, type "Fixes #issue-number", where "issue-number" is the number of the issue in the original repository that the pull request is related to.
+2. Make sure the issue number is preceded by the "#" symbol. For example, if the issue number is "123", you would type "Fixes #123".
+3. When you submit the pull request, GitHub will automatically link the pull request to the issue in the original repository.
+4. The pull request will also appear in the "Pull requests" tab of the original repository's issue.
+5. Here's an example of what the syntax would look like in a pull request comment:
+
 ## Code of Conduct
 
 This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/). By participating, you are expected to uphold this code. Please report any unacceptable behavior to the project maintainers at [foresthpark@gmail.com].
