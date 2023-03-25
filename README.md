@@ -27,6 +27,32 @@ Here are a few guidelines to follow when contributing:
 
 This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/). By participating, you are expected to uphold this code. Please report any unacceptable behavior to the project maintainers at [foresthpark@gmail.com].
 
+## Technologies
+
+This project uses the following technologies:
+
+- Next.js: a React framework for building server-side rendered applications
+- tRPC: a TypeScript-first RPC framework for building APIs with strongly-typed contracts
+- Tailwind CSS: a utility-first CSS framework for rapidly building custom user interfaces
+- Axios: a Promise-based HTTP client for making API requests
+- date-fns: a library for working with dates and times in JavaScript
+- NextAuth.js: an authentication library for Next.js applications
+- react-hook-form: a library for building forms in React
+- zod: a TypeScript-first schema validation library
+
+### Documentation
+
+Here are the links to the official documentation for each technology:
+
+- [Next.js](https://nextjs.org/docs/getting-started)
+- [tRPC](https://trpc.io/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Axios](https://axios-http.com/docs/intro)
+- [date-fns](https://date-fns.org/docs/)
+- [NextAuth.js](https://next-auth.js.org/getting-started/introduction)
+- [react-hook-form](https://react-hook-form.com/get-started/)
+- [zod](https://github.com/vriad/zod/tree/main/docs)
+
 ## Feedback
 
 If you have any feedback, questions or suggestions, feel free to create a new issue or contact the project maintainers at [foresthpark@gmail.com](mailto:foresthpark@gmail.com).
