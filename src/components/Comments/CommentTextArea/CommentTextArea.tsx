@@ -47,7 +47,7 @@ export default function CommentTextArea({
               rows={rows}
               {...register("comment", { required: true })}
               id="comment"
-              className="block w-full resize-none border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+              className="block w-full resize-none border-0 border-none bg-transparent p-3 text-gray-900 placeholder:text-gray-400 focus:outline-none sm:py-1.5 sm:text-sm sm:leading-6"
               placeholder="Add your comment..."
               defaultValue={""}
             />
