@@ -23,6 +23,21 @@ Here are a few guidelines to follow when contributing:
 - **Test your changes.** Make sure your changes don't break existing functionality and that they work as expected.
 - **Be respectful.** Remember that this is an open-source project and that everyone is here to learn and improve.
 
+## Contributing
+
+To contribute to this project, follow these steps:
+
+1. Fork this repository by clicking the "Fork" button at the top of the repository page.
+2. Clone the forked repository to your local machine using the command git clone <forked-repo-url>.
+3. Create a new branch for your changes using the command git checkout -b <new-branch-name>.
+4. Make the necessary changes to the code, and make sure they follow the project's coding style and conventions.
+5. Commit your changes with a descriptive commit message using the command git commit -m "Descriptive commit message".
+6. Push your changes to your forked repository using the command git push origin <new-branch-name>.
+7. Create a pull request by clicking the "New pull request" button on the forked repository page.
+8. Wait for the project maintainers to review your pull request and provide feedback.
+9. Make any necessary changes based on the feedback, and push them to your branch.
+10. Repeat steps 8 and 9 until your pull request is accepted and merged into the main repository.
+
 ## Code of Conduct
 
 This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/). By participating, you are expected to uphold this code. Please report any unacceptable behavior to the project maintainers at [foresthpark@gmail.com].
