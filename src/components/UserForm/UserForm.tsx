@@ -5,6 +5,7 @@ import { User } from "@prisma/client";
 import Image from "next/image";
 import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import GenericInput from "../atoms/Input/GenericInput";
 
 interface UserFormProps {
   user:
@@ -52,12 +53,11 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
           Title
         </label>
         <div className="mt-2 sm:col-span-2 sm:mt-0">
-          <input
+          <GenericInput
+            register={register("title")}
+            placeholder="Chief Fun Officer"
             type="text"
-            {...register("title")}
             id="title"
-            placeholder={"Chief Fun Officer"}
-            className="block w-full max-w-lg rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
         </div>
       </div>
@@ -70,13 +70,11 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
           Github
         </label>
         <div className="mt-2 sm:col-span-2 sm:mt-0">
-          <input
+          <GenericInput
+            register={register("github")}
+            placeholder="Github address"
             type="text"
             id="github"
-            {...register("github")}
-            autoComplete="github"
-            placeholder="Github address"
-            className="block w-full max-w-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
         </div>
       </div>
@@ -89,13 +87,11 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
           Linkedin
         </label>
         <div className="mt-2 sm:col-span-2 sm:mt-0">
-          <input
+          <GenericInput
+            register={register("linkedin")}
+            placeholder="Linkedin Address"
             type="text"
             id="linkedin"
-            {...register("linkedin")}
-            autoComplete="linkedin"
-            placeholder="Linkedin address"
-            className="block w-full max-w-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
         </div>
       </div>
@@ -108,13 +104,11 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
           Twitter
         </label>
         <div className="mt-2 sm:col-span-2 sm:mt-0">
-          <input
+          <GenericInput
+            register={register("twitter")}
+            placeholder="Twitter Address"
             type="text"
             id="twitter"
-            {...register("twitter")}
-            autoComplete="twitter"
-            placeholder="Twitter Address"
-            className="block w-full max-w-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
         </div>
       </div>
@@ -127,13 +121,11 @@ export default function UserForm({ user, onSubmit, setIsOpen }: UserFormProps) {
           Website
         </label>
         <div className="mt-2 sm:col-span-2 sm:mt-0">
-          <input
-            id="website"
-            type="text"
-            {...register("website")}
-            autoComplete="website"
+          <GenericInput
+            register={register("website")}
             placeholder="Website Address"
-            className="block w-full max-w-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:max-w-xs sm:text-sm sm:leading-6"
+            type="text"
+            id="website"
           />
         </div>
       </div>
