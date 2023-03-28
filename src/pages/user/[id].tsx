@@ -65,15 +65,7 @@ export default function UserDetail() {
     <div className="flex flex-col items-center justify-center pt-10">
       <UserCard userData={userData} />
 
-      <div className="space-y-6 pt-8 sm:space-y-5 sm:pt-10">
-        <div>
-          <h3 className="text-base font-semibold leading-6 text-gray-900">
-            Personal Information
-          </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            Use a permanent address where you can receive mail.
-          </p>
-        </div>
+      <div className="w-96 space-y-6 pt-8 sm:space-y-5 sm:pt-10">
         <UserForm user={userData} onSubmit={onSubmit} setIsOpen={setIsOpen} />
         <UserTechsModal
           userId={userData?.id}
