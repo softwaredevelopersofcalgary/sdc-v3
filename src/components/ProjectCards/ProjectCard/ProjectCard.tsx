@@ -26,15 +26,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const user = useUserSession();
 
   const { handleSubmit, register, reset } = useForm();
-  const { mutateAsync: createComment } = api.projects.createComment.useMutation(
-    {
+  const { mutateAsync: createComment, isLoading } =
+    api.projects.createComment.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
           id: project.eventId,
         });
       },
-    }
-  );
+    });
 
   const onCommentSubmit = async (data: CommentTextAreaValues) => {
     await createComment({
@@ -192,6 +191,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         {user && (
           <div className="pt-4">
             <CommentTextArea
+              isLoading={isLoading}
               handleSubmit={handleSubmit}
               register={register}
               onSubmit={onCommentSubmit}
