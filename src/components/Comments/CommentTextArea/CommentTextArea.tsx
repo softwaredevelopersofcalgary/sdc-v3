@@ -13,6 +13,7 @@ interface CommentTextAreaProps {
   register: UseFormRegister<FieldValues>;
   onSubmit: (data: CommentTextAreaValues) => void;
   rows?: number;
+  isLoading: boolean;
 }
 
 export interface CommentTextAreaValues {
@@ -24,6 +25,7 @@ export default function CommentTextArea({
   register,
   onSubmit,
   rows = 3,
+  isLoading,
 }: CommentTextAreaProps) {
   const user = useUserSession();
 
@@ -64,10 +66,18 @@ export default function CommentTextArea({
           <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pl-3 pr-2">
             <div className="flex-shrink-0">
               <button
+                disabled={isLoading}
                 type="submit"
-                className="inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className={`
+                inline-flex items-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600
+                ${
+                  isLoading
+                    ? "cursor-not-allowed bg-gray-300 hover:bg-gray-300"
+                    : "bg-gray-600"
+                }
+                `}
               >
-                Post
+                {isLoading ? "Loading..." : "Post"}
               </button>
             </div>
           </div>

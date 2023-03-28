@@ -15,5 +15,5 @@ export const IsUserEditor = () => {
     }
   );
 
-  return userData?.data?.role === "ADMIN" || "MOD";
+  return userData?.data?.role === "ADMIN" || userData?.data?.role === "MOD";
 };
