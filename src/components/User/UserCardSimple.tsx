@@ -31,15 +31,20 @@ export default function UserCardSimple({
         </p>
       </div>
 
-      <div className="flex flex-row flex-wrap items-center justify-center gap-2 px-4">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-2 p-4">
         {userTechs?.map((tech) => (
-          <Image
-            src={tech.tech.imgUrl}
-            width={30}
-            height={30}
+          <div
             key={tech.id}
-            alt={tech.tech.label}
-          />
+            className="flex flex-col items-center justify-center"
+          >
+            <Image
+              src={tech.tech.imgUrl}
+              width={30}
+              height={30}
+              alt={tech.tech.label}
+            />
+            <span className="text-[9px]">{tech.tech.label}</span>
+          </div>
         ))}
       </div>
     </div>
