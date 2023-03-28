@@ -119,27 +119,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <div className="py-2">
               <TechTagRow techs={project.techs} />
             </div>
-            <div className="py-2">
-              <PillButton
-                label={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? "Loading..."
-                    : project.isMember
-                    ? "Leave Project"
-                    : "Join Project"
-                }
-                isMember={project?.isMember}
-                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
-                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                handleClick={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? () => void null
-                    : project?.isMember
-                    ? handleLeaveProject
-                    : handleJoinProject
-                }
-              />
-            </div>
+            {user && (
+              <div className="py-2">
+                <PillButton
+                  label={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? "Loading..."
+                      : project.isMember
+                      ? "Leave Project"
+                      : "Join Project"
+                  }
+                  isMember={project?.isMember}
+                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                  isLoading={joinProjectIsLoading || leaveProjectIsLoading}
+                  handleClick={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? () => void null
+                      : project?.isMember
+                      ? handleLeaveProject
+                      : handleJoinProject
+                  }
+                />
+              </div>
+            )}
             {project.members && project.members?.length > 0 && (
               <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
                 <span className="font-bold">Members:</span>
