@@ -21,7 +21,7 @@ export default function EventDetailHeader({
 }: EventDetailHeader) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const user = useUserSession();
-  const userIsEditor = IsUserEditor();
+  // const userIsEditor = IsUserEditor();
 
   return (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
@@ -35,7 +35,7 @@ export default function EventDetailHeader({
           <p className="mt-1 max-w-2xl text-sm text-gray-500">{name}</p>
         </div>
         <div>
-          {userIsEditor && user && (
+          {user && (
             <button
               type="button"
               className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
