@@ -86,7 +86,7 @@ export default function NavBar() {
                             alt=""
                           />
                         </div>
-                        <div className="ml-3">
+                        <div className="ml-3 flex flex-col">
                           <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
                             {user.name}
                           </span>

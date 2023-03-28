@@ -26,15 +26,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const user = useUserSession();
 
   const { handleSubmit, register, reset } = useForm();
-  const { mutateAsync: createComment } = api.projects.createComment.useMutation(
-    {
+  const { mutateAsync: createComment, isLoading } =
+    api.projects.createComment.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
           id: project.eventId,
         });
       },
-    }
-  );
+    });
 
   const onCommentSubmit = async (data: CommentTextAreaValues) => {
     await createComment({
@@ -120,27 +119,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <div className="py-2">
               <TechTagRow techs={project.techs} />
             </div>
-            <div className="py-2">
-              <PillButton
-                label={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? "Loading..."
-                    : project.isMember
-                    ? "Leave Project"
-                    : "Join Project"
-                }
-                isMember={project?.isMember}
-                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
-                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                handleClick={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? () => void null
-                    : project?.isMember
-                    ? handleLeaveProject
-                    : handleJoinProject
-                }
-              />
-            </div>
+            {user && (
+              <div className="py-2">
+                <PillButton
+                  label={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? "Loading..."
+                      : project.isMember
+                      ? "Leave Project"
+                      : "Join Project"
+                  }
+                  isMember={project?.isMember}
+                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                  isLoading={joinProjectIsLoading || leaveProjectIsLoading}
+                  handleClick={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? () => void null
+                      : project?.isMember
+                      ? handleLeaveProject
+                      : handleJoinProject
+                  }
+                />
+              </div>
+            )}
             {project.members && project.members?.length > 0 && (
               <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
                 <span className="font-bold">Members:</span>
@@ -192,6 +193,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         {user && (
           <div className="pt-4">
             <CommentTextArea
+              isLoading={isLoading}
               handleSubmit={handleSubmit}
               register={register}
               onSubmit={onCommentSubmit}
