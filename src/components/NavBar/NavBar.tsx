@@ -87,12 +87,12 @@ export default function NavBar() {
                           />
                         </div>
                         <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
                             {user.name}
-                          </p>
-                          <p className="text-xs font-medium text-gray-500 group-hover:text-gray-900">
+                          </span>
+                          <span className="text-xs font-medium text-gray-500 group-hover:text-gray-900">
                             View profile
-                          </p>
+                          </span>
                         </div>
                       </div>
                     </Link>
