@@ -15,28 +15,28 @@ Before getting started, ensure that you have the following prerequisites install
 
 3. Run the following command to start the MySQL container:
 
-```shell
-docker compose -f docker-compose.dev.yml -up -d
-```
+    ```shell
+    docker compose -f docker-compose.dev.yml -up -d
+    ```
 
 4. Wait for Docker to download the MySQL image and start the container. You can check the container status by running the command:
 
-```shell
-docker compose -f docker-compose.dev.yml ps
-```
+    ```shell
+    docker compose -f docker-compose.dev.yml ps
+    ```
 
-You should see an output similar to the following:
+    You should see an output similar to the following:
 
-```shell
-NAME                COMMAND                  SERVICE             STATUS              PORTS
-sdc-v3-mysql-1      "docker-entrypoint.s…"   mysql               running             0.0.0.0:3306->3306/tcp
-```
+    ```shell
+    NAME                COMMAND                  SERVICE             STATUS              PORTS
+    sdc-v3-mysql-1      "docker-entrypoint.s…"   mysql               running             0.0.0.0:3306->3306/tcp
+    ```
 
 5. Once the container is up and running, you can connect to the MySQL instance using a MySQL client tool of your choice. Here's an example using the `mysql` command-line client:
 
-```shell
-mysql -h localhost -P 3306 -u sdc -p
-```
+    ```shell
+    mysql -h localhost -P 3306 -u sdc -p
+    ```
 
 You will be prompted to enter the password. Enter `sdc_password`.
 
@@ -50,15 +50,15 @@ You will be prompted to enter the password. Enter `sdc_password`.
 
 3. Run the following command to start the MySQL container:
 
-```shell
-docker compose -f docker-compose.dev.yml -up -d
-```
+    ```shell
+    docker compose -f docker-compose.dev.yml -up -d
+    ```
 
 4. Wait for Docker to download the MySQL image and start the container. You can check the container status by running the command:
 
-```shell
-docker compose -f docker-compose.dev.yml ps
-```
+    ```shell
+    docker compose -f docker-compose.dev.yml ps
+    ```
 
 
 ### Linux
