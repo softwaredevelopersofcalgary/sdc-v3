@@ -26,10 +26,12 @@ docker compose -f docker-compose.dev.yml ps
 ```
 
 You should see an output similar to the following:
+
 ```shell
 NAME                COMMAND                  SERVICE             STATUS              PORTS
 sdc-v3-mysql-1      "docker-entrypoint.s…"   mysql               running             0.0.0.0:3306->3306/tcp
 ```
+
 5. Once the container is up and running, you can connect to the MySQL instance using a MySQL client tool of your choice. Here's an example using the `mysql` command-line client:
 
 ```shell
@@ -62,3 +64,18 @@ docker compose -f docker-compose.dev.yml ps
 ### Linux
 
 See macOS instructions above.
+
+## Connecting sdc website to the DB
+
+Update the values of `DATABASE_URL` and `SHADOW_DATABASE_URL` in your `.env` file to the following:
+
+```
+DATABASE_URL='mysql://sdc:sdc_password@localhost:3306/sdc'
+SHADOW_DATABASE_URL='mysql://sdc:sdc_password@localhost:3306/sdc_migrations'
+```
+
+Then run prisma migrations to apply schema changes to the newly created DB
+
+```shell
+npx prisma migrate dev
+```
