@@ -1,5 +1,4 @@
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
-import { IsUserEditor } from "@/hooks/IsUserEditor";
 import useUserSession from "@/hooks/useUserSession";
 import { format } from "date-fns";
 import { useState } from "react";
