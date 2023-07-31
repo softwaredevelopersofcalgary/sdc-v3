@@ -138,14 +138,6 @@ const Home: NextPage = () => {
           </svg>
 
           <div className="relative lg:flex lg:items-center">
-            <div className="hidden lg:block lg:flex-shrink-0">
-              <img
-                className="xl:h-62 xl:w-62 h-48 w-48 rounded-full"
-                src="https://user-images.githubusercontent.com/47466645/194219745-2cb2cdd7-6c2b-4979-a721-b886a70b69bf.jpeg"
-                alt=""
-              />
-            </div>
-
             <div className="relative lg:ml-10">
               <svg
                 className="absolute top-0 left-0 h-36 w-36 -translate-x-8 -translate-y-24 transform text-gray-200 opacity-50"
