@@ -13,7 +13,19 @@ load_dotenv()
 def storeEvents(eventListings, cursor, connection):
   linkPrefix = "https://www.meetup.com"
 
-  for event in eventListings:
+  for event in eventListings:    
+    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
+    dateEdited = re.sub('<span>|</span>', '', date)
+    dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %Z')
+
+    mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
+    startTime = dateObj.strftime('%I:%M %p')
+
+    # if there's an event on that same day, then we take it out 
+    if isEventInDB(cursor, connection, mysqlDateStr + ".000"):
+      print("Event already in DB")
+      continue
+
     cuid = generateCuid();
 
     isFeatured = True
@@ -21,13 +33,6 @@ def storeEvents(eventListings, cursor, connection):
     name = event.find("span", class_="visibility--a11yHide").text.strip()
 
     location = event.find("div", class_="venueDisplay").text.strip()
-    
-    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
-    dateEdited = re.sub('<span>|</span>', '', date)
-    dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %Z')
-    
-    mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
-    startTime = dateObj.strftime('%I:%M %p')
 
     updatedAt = datetime.now()
 
@@ -41,6 +46,18 @@ def storeEvents(eventListings, cursor, connection):
     
   cursor.execute(insertQuery, recordToInsert)
   connection.commit()
+
+def isEventInDB(cursor, connection, date):
+  query = """SELECT COUNT(*) FROM `Event` WHERE `date` = %s"""
+  cursor.execute(query, (date,))
+
+  result = cursor.fetchone()
+  count = result[0]
+
+  if count > 0:
+      return True
+  else:
+      return False
 
 def clearEventsDB(cursor, connection):
   cursor.execute("DELETE FROM Event")
@@ -91,7 +108,6 @@ def getImageUrl(soup):
   imageUrl = image["src"] if image else ""
 
   return imageUrl
-
 
 def generateCuid():
   timestamp = int(time.time() * 1000)
