@@ -12,7 +12,11 @@ import { createEventSchema } from "./Event/event.schema";
 
 export const eventRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const events = await ctx.prisma.event.findMany();
+    const events = await ctx.prisma.event.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
 
     return events;
   }),

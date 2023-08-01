@@ -26,15 +26,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const user = useUserSession();
 
   const { handleSubmit, register, reset } = useForm();
-  const { mutateAsync: createComment } = api.projects.createComment.useMutation(
-    {
+  const { mutateAsync: createComment, isLoading } =
+    api.projects.createComment.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
           id: project.eventId,
         });
       },
-    }
-  );
+    });
 
   const onCommentSubmit = async (data: CommentTextAreaValues) => {
     await createComment({
@@ -114,50 +113,52 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="flex flex-1 flex-col justify-between bg-white p-6">
         <div className="flex-1">
           <div className="mt-2 block">
-            <p className="text-xl font-semibold text-gray-700">
+            <div className="text-xl font-semibold text-gray-700">
               {project.name}
-            </p>
-            <p className="py-2">
+            </div>
+            <div className="py-2">
               <TechTagRow techs={project.techs} />
-            </p>
-            <p className="py-2">
-              <PillButton
-                label={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? "Loading..."
-                    : project.isMember
-                    ? "Leave Project"
-                    : "Join Project"
-                }
-                isMember={project?.isMember}
-                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
-                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                handleClick={
-                  joinProjectIsLoading || leaveProjectIsLoading
-                    ? () => void null
-                    : project?.isMember
-                    ? handleLeaveProject
-                    : handleJoinProject
-                }
-              />
-            </p>
+            </div>
+            {user && (
+              <div className="py-2">
+                <PillButton
+                  label={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? "Loading..."
+                      : project.isMember
+                      ? "Leave Project"
+                      : "Join Project"
+                  }
+                  isMember={project?.isMember}
+                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                  isLoading={joinProjectIsLoading || leaveProjectIsLoading}
+                  handleClick={
+                    joinProjectIsLoading || leaveProjectIsLoading
+                      ? () => void null
+                      : project?.isMember
+                      ? handleLeaveProject
+                      : handleJoinProject
+                  }
+                />
+              </div>
+            )}
             {project.members && project.members?.length > 0 && (
-              <p className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
+              <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
                 <span className="font-bold">Members:</span>
                 <MemberTagRow members={project?.members} />
-              </p>
+              </div>
             )}
-            <p className="mt-3 text-base text-gray-500">
+            <div className="mt-3 text-base text-gray-500">
               {project.description}
-            </p>
+            </div>
           </div>
         </div>
         <div className="mt-6 flex flex-row items-center justify-between">
           <div className="flex flex-row items-center gap-10">
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-gray-900">
                 {project.author.name}
-              </p>
+              </span>
               <div className="flex space-x-1 text-sm text-gray-500">
                 <div>
                   {format(new Date(project.createdAt), "MMMM dd, yyyy")}
@@ -192,6 +193,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         {user && (
           <div className="pt-4">
             <CommentTextArea
+              isLoading={isLoading}
               handleSubmit={handleSubmit}
               register={register}
               onSubmit={onCommentSubmit}
