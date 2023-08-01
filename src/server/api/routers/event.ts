@@ -36,6 +36,12 @@ export const eventRouter = createTRPCRouter({
         },
 
         include: {
+          users: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
           projects: {
             orderBy: {
               createdAt: "desc",
