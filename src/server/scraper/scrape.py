@@ -13,8 +13,6 @@ load_dotenv()
 def storeEvents(eventListings, cursor, connection):
   linkPrefix = "https://www.meetup.com"
 
-  clearEventsDB(cursor, connection)
-
   for event in eventListings:
     cuid = generateCuid();
 
@@ -37,16 +35,6 @@ def storeEvents(eventListings, cursor, connection):
     link = linkPrefix + link
 
     description, imageUrl = getDescAndImgUrl(link)
-
-    # for debugging purposes only
-    print("name: ", event.find("span", class_="visibility--a11yHide").text.strip())
-    print("Location:", location)
-    print("Date:", dateEdited)
-    print("Link:", link)
-    print("CUID: ", cuid)
-    print("Description: ", description)
-    print("start time: ", startTime)
-    print("image url: ", imageUrl)
 
     insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
     recordToInsert = (cuid, name, mysqlDateStr, location, description, startTime, imageUrl,isFeatured, updatedAt)
