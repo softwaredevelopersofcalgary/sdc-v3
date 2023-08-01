@@ -2,7 +2,7 @@
   "_comment": "Schedule runs on the 28th of every month at midnight",
     "crons": [
       {
-        "path": "/src/scraper/",
+        "path": "/src/scraper/scrape",
         "schedule": "0 0 28 * *" 
       }
     ]

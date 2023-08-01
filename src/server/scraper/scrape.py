@@ -1,77 +1,122 @@
 from dotenv import load_dotenv
-load_dotenv()
-
 import requests
 from bs4 import BeautifulSoup
 import re
 import os
 import MySQLdb
 from datetime import datetime
+import time
+import random
 
-connection = MySQLdb.connect(
-  host= os.getenv("HOST"),
-  user=os.getenv("USERNAME"),
-  passwd= os.getenv("PASSWORD"),
-  db= os.getenv("DATABASE"),
-  autocommit = True,
-  ssl_mode = "VERIFY_IDENTITY",
-  ssl      = {
-    "ca": "/etc/ssl/cert.pem"
-  }
-)
-# set up connection to the database
-cursor = connection.cursor()
+load_dotenv()
 
+def storeEvents(eventListings, cursor, connection):
+  linkPrefix = "https://www.meetup.com"
 
+  clearEventsDB(cursor, connection)
 
+  for event in eventListings:
+    cuid = generateCuid();
 
-# Send a request to the webpage
-url = "https://www.meetup.com/software-developers-of-calgary/events/"
-response = requests.get(url)
-
-# Parse the HTML content of the page
-soup = BeautifulSoup(response.content, "html.parser")
-
-# Find the event listings on the page
-# event_listings = soup.find_all("ul", class_="eventList-list")
-event_listings = soup.find_all("div", class_="eventCard")
-
-# print(event_listings)
-
-counter = 1;
-# Extract the information for each event
-for event in event_listings:
-    name = "Mini Hackathon"
-    description = "Mini Hackathon"
-    startTime = "10:00 AM"
-    image = ""
     isFeatured = True
 
-    location = event.find("div", class_="venueDisplay").text.strip()
-    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
-    date_edited = re.sub('<span>|</span>', '', date)
-    
-    # Convert to a datetime object using strptime with the correct format
-    date_obj = datetime.strptime(date_edited, '%a, %b %d, %Y, %I:%M %p %Z')
+    name = event.find("span", class_="visibility--a11yHide").text.strip()
 
-    # Format the datetime object in the MySQL-compatible format
-    mysql_date_str = date_obj.strftime('%Y-%m-%d %H:%M:%S')
-        
-    link = event.find("a", class_="eventCard--link")["href"]
-    link = "https://www.meetup.com" + link
+    location = event.find("div", class_="venueDisplay").text.strip()
+    
+    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
+    dateEdited = re.sub('<span>|</span>', '', date)
+    dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %Z')
+    
+    mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
+    startTime = dateObj.strftime('%I:%M %p')
 
     updatedAt = datetime.now()
-    # Print the information for each event
+
+    link = event.find("a", class_="eventCard--link")["href"]
+    link = linkPrefix + link
+
+    description, imageUrl = getDescAndImgUrl(link)
+
+    # for debugging purposes only
+    print("name: ", event.find("span", class_="visibility--a11yHide").text.strip())
     print("Location:", location)
-    print("Date:", date_edited)
+    print("Date:", dateEdited)
     print("Link:", link)
-    insert_query = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    record_to_insert = (counter, name, mysql_date_str, location, description, startTime, image,isFeatured, updatedAt)
-    cursor.execute(insert_query, record_to_insert)
+    print("CUID: ", cuid)
+    print("Description: ", description)
+    print("start time: ", startTime)
+    print("image url: ", imageUrl)
 
-    connection.commit()
+    insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    recordToInsert = (cuid, name, mysqlDateStr, location, description, startTime, imageUrl,isFeatured, updatedAt)
+    
+  cursor.execute(insertQuery, recordToInsert)
+  connection.commit()
 
-    counter += 1
+def clearEventsDB(cursor, connection):
+  cursor.execute("DELETE FROM Event")
+  connection.commit()
 
-cursor.close()
-connection.close()
+def setUpDB():
+  connection = MySQLdb.connect(
+    host= os.getenv("HOST"),
+    user=os.getenv("USERNAME"),
+    passwd= os.getenv("PASSWORD"),
+    db= os.getenv("DATABASE"),
+    autocommit = True,
+    ssl_mode = "VERIFY_IDENTITY",
+    ssl      = {
+        "ca": "/etc/ssl/cert.pem"
+    }
+  )
+
+  cursor = connection.cursor()
+  return cursor, connection
+
+def getEventData():
+  url = "https://www.meetup.com/software-developers-of-calgary/events/"
+  response = requests.get(url)
+
+  soup = BeautifulSoup(response.content, "html.parser")
+
+  eventListings = soup.find_all("div", class_="eventCard")
+
+  return eventListings
+
+# todo: make a generic function to handle this and the getEventData
+def getDescAndImgUrl(eventLink):
+  response = requests.get(eventLink)
+  soup = BeautifulSoup(response.content, "html.parser")
+  descriptionHtml = soup.find("div", class_="break-words")
+  
+  imageUrl = getImageUrl(soup)
+
+  # for some reason, the description has a max of 191 characters on the DB
+  # todo: change the description table to allow for more characters
+  description = (descriptionHtml.get_text() if descriptionHtml else "")[:191]
+
+  return description, imageUrl
+
+def getImageUrl(soup):
+  image = soup.find("img", {"alt": "Photo of Software Developers of Calgary group"})
+  imageUrl = image["src"] if image else ""
+
+  return imageUrl
+
+
+def generateCuid():
+  timestamp = int(time.time() * 1000)
+  randomPart = random.randint(0, 0xffffff)
+
+  return f'c{timestamp:x}{randomPart:06x}'
+
+def closeDB(cursor, connection):
+  cursor.close()
+  connection.close()
+
+# MAIN:
+cursor, connection = setUpDB()
+eventListings = getEventData()
+storeEvents(eventListings, cursor, connection)
+closeDB(cursor, connection)
