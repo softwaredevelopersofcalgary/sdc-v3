@@ -101,7 +101,7 @@ model Event {
   name        String
   date        DateTime
   location    String
-  description String
+  description String @db.VarChar(1000)
   startTime   String
 
   image      String?
