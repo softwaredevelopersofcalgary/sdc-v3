@@ -1,0 +1,30 @@
+name: Run Python Scraper
+on:
+  schedule:
+    - cron: '0 12 28 * *' 
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Load environment variables
+        run: echo "HOST=${{ secrets.HOST }}" >> $GITHUB_ENV
+        run: echo "USERNAME=${{ secrets.USERNAME }}" >> $GITHUB_ENV
+        run: echo "PASSWORD=${{ secrets.PASSWORD }}" >> $GITHUB_ENV
+        run: echo "DATABASE=${{ secrets.DATABASE }}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests python-dotenv MySQLdb
+
+      - name: Run scraper
+        run: python scrape.py
