@@ -44,8 +44,8 @@ def storeEvents(eventListings, cursor, connection):
     insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
     recordToInsert = (cuid, name, mysqlDateStr, location, description, startTime, imageUrl,isFeatured, updatedAt)
     
-  cursor.execute(insertQuery, recordToInsert)
-  connection.commit()
+    cursor.execute(insertQuery, recordToInsert)
+    connection.commit()
 
 def isEventInDB(cursor, connection, date):
   query = """SELECT COUNT(*) FROM `Event` WHERE `date` = %s"""
