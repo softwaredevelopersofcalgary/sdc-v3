@@ -1,0 +1,18 @@
+name: Read Events Table Weekly
+
+# Description: 
+# We need the planet scale db alive. 
+# - So this just calls the events page every week to do that.
+# - For context, planetscale's free tier shuts down after
+#   - 7 days of inactivity.
+# Run every Sunday at 12:00 AM UTC
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  
+jobs:
+  db-read:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Next.js API
+        run: curl curl https://sdc-v3.vercel.app/events
