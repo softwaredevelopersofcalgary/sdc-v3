@@ -15,10 +15,7 @@ def storeEvents(eventListings, cursor, connection):
 
   for event in eventListings:    
     date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
-    dateEdited = re.sub('<span>|</span>', '', date)
-    dateEdited = dateEdited.replace("MDT", "-0600")
-    dateEdited = dateEdited.replace("MST", "-0700")
-    dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %z')
+    dateObj = formatDate(date)
 
     mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
     startTime = dateObj.strftime('%I:%M %p')
@@ -48,6 +45,17 @@ def storeEvents(eventListings, cursor, connection):
     
     cursor.execute(insertQuery, recordToInsert)
     connection.commit()
+
+def formatDate(date):
+  dateEdited = re.sub('<span>|</span>', '', date)
+  if "MDT" in dateEdited:
+    dateEdited = dateEdited.replace("MDT", "-0600")
+  elif "MST" in dateEdited:
+    dateEdited = dateEdited.replace("MST", "-0700")
+
+  dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %z')
+
+  return dateObj
 
 def isEventInDB(cursor, connection, date):
   query = """SELECT COUNT(*) FROM `Event` WHERE `date` = %s"""
