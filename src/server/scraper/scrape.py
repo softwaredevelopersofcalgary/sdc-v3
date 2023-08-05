@@ -16,6 +16,7 @@ def storeEvents(eventListings, cursor, connection):
   for event in eventListings:    
     date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
     dateEdited = re.sub('<span>|</span>', '', date)
+    dateEdited = dateEdited.replace("MDT", "-0600")
     dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %Z')
 
     mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
