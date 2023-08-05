@@ -1,15 +1,16 @@
-name: Read Events Table Weekly
+name: Read Events Table Every 12 Hours
 
 # Description: 
 # We need the planet scale db alive. 
 # - So this just calls the events page every week to do that.
 # - For context, planetscale's free tier shuts down after
 #   - 7 days of inactivity.
-# Run every Sunday at 12:00 AM UTC
+# Run every 12 Hours
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 0'  
+    - cron: '0 */12 * * *'  
 jobs:
   db-read:
     runs-on: ubuntu-latest
