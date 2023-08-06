@@ -42,7 +42,9 @@ export default function EventsPage() {
                   {post.location}
                 </p>
                 <p className="mt-3 text-base text-gray-500">
-                  {post.description}
+                  {post.description.length <= 150
+                    ? post.description
+                    : post.description.substring(0, 150) + "[...]"}
                 </p>
               </div>
               <div className="mt-3">
