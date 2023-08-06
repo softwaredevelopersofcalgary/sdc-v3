@@ -30,10 +30,10 @@ export default function EventsPage() {
           </button>
         </div>
       )}
-      <div className="mt-6 grid gap-16 pt-10 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-12">
+      <div className="mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-12">
         {data?.map((post) => (
           <Link href={`/events/${post.id}`} key={post.id}>
-            <div className=" min-w-[200px] max-w-sm rounded-lg border-[1.0px] border-gray-300 p-4">
+            <div className="min-w-[200px] rounded-lg border-[1.0px] border-gray-300 p-4">
               <p className="text-sm text-gray-500">
                 {format(new Date(post.date), "yyyy/MM/dd")} - {post.startTime}
               </p>
