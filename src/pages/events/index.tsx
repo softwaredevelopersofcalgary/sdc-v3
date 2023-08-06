@@ -30,7 +30,7 @@ export default function EventsPage() {
           </button>
         </div>
       )}
-      <div className="mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-12">
+      <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
         {data?.map((post) => (
           <Link href={`/events/${post.id}`} key={post.id}>
             <div className="min-w-[200px] rounded-lg border-[1.0px] border-gray-300 p-4">
