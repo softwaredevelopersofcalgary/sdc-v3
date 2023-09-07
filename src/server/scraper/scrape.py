@@ -74,6 +74,7 @@ def clearEventsDB(cursor, connection):
   connection.commit()
 
 def setUpDB():
+  print (os.getenv("HOST"))
   connection = MySQLdb.connect(
     host= os.getenv("HOST"),
     user=os.getenv("USERNAME"),
