@@ -39,6 +39,8 @@ def storeEvents(eventListings, cursor, connection):
     link = linkPrefix + link
 
     description, imageUrl = getDescAndImgUrl(link)
+    print ("Creating new event: ")
+    print (mysqlDateStr)
 
     insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
     recordToInsert = (cuid, name, mysqlDateStr, location, description, startTime, imageUrl,isFeatured, updatedAt)
