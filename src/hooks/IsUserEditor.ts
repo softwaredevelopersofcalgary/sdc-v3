@@ -4,11 +4,9 @@ import useUserSession from "./useUserSession";
 export const IsUserEditor = () => {
   const user = useUserSession();
 
-  if (!user?.id) return false;
-
   const userData = api.users.getById.useQuery(
     {
-      id: user?.id,
+      id: user?.id ? user.id : "",
     },
     {
       enabled: !!user?.id,
