@@ -48,7 +48,7 @@ To link a pull request from a forked repository to the original repository's iss
 
 ## Code of Conduct
 
-This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/). By participating, you are expected to uphold this code. Please report any unacceptable behavior to the project maintainers at [foresthpark@gmail.com].
+This project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/). By participating, you are expected to uphold this code. Please report any unacceptable behavior to the project maintainers at [simon.hlywa@gmail.com or kole.audu@gmail.com].
 
 ## Technologies
 
