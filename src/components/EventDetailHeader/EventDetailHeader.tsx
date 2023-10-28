@@ -2,6 +2,7 @@ import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import useUserSession from "@/hooks/useUserSession";
 import { format } from "date-fns";
 import { useState } from "react";
+import { signIn, signOut } from "next-auth/react";
 
 interface EventDetailHeader {
   date?: Date;
@@ -33,15 +34,39 @@ export default function EventDetailHeader({
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-gray-500">{name}</p>
         </div>
+
+        <div>
+          {!user && (
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                onClick={() => signIn()}
+              >
+                Attend Event
+              </button>
+            </div>
+          )}
+        </div>
+
         <div>
           {user && (
-            <button
-              type="button"
-              className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              onClick={() => setIsOpen(true)}
-            >
-              New Project
-            </button>
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                onClick={() => setIsOpen(true)}
+              >
+                Attend Event
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                onClick={() => setIsOpen(true)}
+              >
+                New Project
+              </button>
+            </div>
           )}
         </div>
       </div>
