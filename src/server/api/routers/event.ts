@@ -20,7 +20,47 @@ export const eventRouter = createTRPCRouter({
 
     return events;
   }),
+  getAllWithProjects: publicProcedure.query(async ({ ctx }) => {
+    const events = await ctx.prisma.event.findMany({
+      orderBy: {
+        date: "desc",
+      },
+      include: {
+        projects: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            members: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+              },
+            },
+            techs: {
+              include: {
+                tech: {
+                  select: {
+                    label: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
 
+    return events;
+  }),
   findUnique: publicProcedure
     .input(
       z.object({
