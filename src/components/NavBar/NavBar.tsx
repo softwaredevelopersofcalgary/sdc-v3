@@ -10,7 +10,7 @@ import { signIn, signOut } from "next-auth/react";
 const navigation = [
   { name: "Home", href: "/", current: false },
   { name: "Events", href: "/events", current: false },
-  // { name: "Projects", href: "/projects", current: false },
+  { name: "Projects", href: "/projects", current: false },
   // { name: "Join Us", href: "/join", current: false },
 ];
 
