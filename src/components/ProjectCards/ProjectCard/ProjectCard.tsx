@@ -84,6 +84,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       },
     });
 
+
   const handleJoinProject = async () => {
     await joinProject({
       projectId: project.id,
