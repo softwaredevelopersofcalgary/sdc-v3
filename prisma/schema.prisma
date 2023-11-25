@@ -12,8 +12,8 @@ datasource db {
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  url = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Example {
@@ -76,6 +76,7 @@ model User {
   website  String?
 
   memberOfProjects Project[] @relation("ProjectMembers")
+  memberOfEvents Event[] @relation("EventMembers")
 
   createdAt DateTime @default(now())
 
@@ -108,6 +109,8 @@ model Event {
   isFeatured Boolean   @default(false)
   users      User[]
   projects   Project[]
+
+  members User[] @relation("EventMembers")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -96,10 +96,21 @@ export const eventRouter = createTRPCRouter({
               },
             },
           },
+          members: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
         },
       });
 
       if (currentUser) {
+        const membersWithUserStatus = event?.members?.map(member => ({
+          ...member,
+          isCurrentUserMember: member.id === currentUser.id
+        }));
+
         const projectsWithUser = event?.projects?.map((project) => {
           const isMember = project?.members?.some(
             (member) => member.id === currentUser.id
@@ -117,6 +128,7 @@ export const eventRouter = createTRPCRouter({
 
         return {
           ...event,
+          members: membersWithUserStatus,
           projects: projectsWithUser?.map((project) => ({
             ...project,
             isUserPartOfAnyProject,
@@ -138,4 +150,77 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
+  
+  attendEvent: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          memberOfEvents: {
+            connect: {
+              id: input.eventId,
+            },
+          },
+        },
+      });
+    }),
+
+  // getAllAttendees: publicProcedure
+  //   .input(z.object({
+  //     eventId: z.string(),
+  //   }))
+  //   .query(async ({ ctx, input }) => {
+  //     const attendees = await ctx.prisma.event.findUnique({
+  //       where: {
+  //         id: input.eventId,
+  //       },
+  //       include: {
+  //         users: true
+  //     });
+
+  //     // Assuming you want to return just the users, not the entire event object.
+  //     return attendees ? attendees.users : [];
+  //   }),
+
+  getAllUsersAttendingEventButNotInProjects: protectedProcedure
+  .input(
+    z.object({
+      eventId: z.string(),
+    })
+  )
+  .query(async ({ ctx, input }) => {
+    const usersAttendingEventNotInProjects = await ctx.prisma.user.findMany({
+      where: {
+        // Checking if the user is part of the specific event
+        memberOfEvents: {
+          some: {
+            id: input.eventId,
+          },
+        },
+        // Ensuring the user is not part of any project
+        memberOfProjects: {
+          none: {},
+        },
+      },
+      select: {
+        name: true,
+        email: true,
+      }
+    });
+
+    return usersAttendingEventNotInProjects;
+  }),
+
 });
+
+// we want to get the memebers of the event 
+// and then we want to loop through this to find who's attending the event 
+// 
