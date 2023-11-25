@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+button:disabled {
+    /* cursor: not-allowed; */
+    background-color: #cbd5e0; /* bg-gray-400 */
+}
+
+button:disabled:hover, button:disabled:focus {
+    background-color: #cbd5e0; /* Keeps the color consistent */
+    box-shadow: none; /* Removes any focus or hover effects */
+}
