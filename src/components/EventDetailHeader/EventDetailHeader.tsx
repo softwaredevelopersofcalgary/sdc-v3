@@ -34,25 +34,24 @@ export default function EventDetailHeader({
       eventId: eventId || "",
       userId: user?.id || "",
     });
-
-    await consoleAllUsersAttendingEventWithoutProj();
   };
 
+  const handleAssignUsers = async () => {
+    await autoAssignUsers({
+      eventId: eventId || "clmg0uk8h0006l008by9w1xpx",
+    });
+  };
 
-  const consoleAllUsersAttendingEventWithoutProj = async () => {
-    const data = await api.events.getAllUsersAttendingEventButNotInProjects.useQuery({
-      eventId: "1", // Replace with the actual event ID
-    }, {
-      onSuccess: (data) => {
-        console.log("Users not attending any project but part of the event:", data);
+  const { mutate: autoAssignUsers, isLoading: isAutoAssignLoading, error: autoAssignError } = 
+    api.events.autoAssignUsersToProjects.useMutation({
+      onSuccess: (data:any) => {
+        console.log("Users successfully assigned to projects.");
+        // You may want to invalidate or refetch relevant queries here
       },
       onError: (error) => {
-        console.error("Error fetching data:", error);
-      }
+        console.error("Error during auto-assignment:", error);
+      },
     });
-
-    console.log("data: ", data);
-  }
 
   const { data: usersNotAttending, isLoading: usersNotAttendingEventIsLoading } = 
     api.events.getAllUsersAttendingEventButNotInProjects.useQuery({
@@ -113,20 +112,20 @@ export default function EventDetailHeader({
               >
                 {isUserAttendEvent ? "Registered for event" : "Attend Event"}
               </button>
-
-              <button
-                type="button"
-                className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${!isUserAttendEvent ? "bg-gray-600" : "bg-gray-400 cursor-not-allowed  disabled"}`}
-                onClick={() => consoleAllUsersAttendingEventWithoutProj() }
-              >
-                showThem
-              </button>
               <button
                 type="button"
                 className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 onClick={() => setIsOpen(true)}
               >
                 New Project
+              </button>
+
+              <button
+                 type="button"
+                 className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${!isUserAttendEvent ? "bg-gray-600" : "bg-gray-400 cursor-not-allowed  disabled"}`}
+                 onClick={() => handleAssignUsers() }
+              >
+                Auto Assign Users to Projects
               </button>
             </div>
           )}
