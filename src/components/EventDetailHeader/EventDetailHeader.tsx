@@ -6,6 +6,7 @@ import { signIn, signOut } from "next-auth/react";
 import { Session } from "inspector";
 import { api } from "@/utils/api";
 import PillButton from "../atoms/PillButton/PillButton";
+import { useRouter } from "next/router";
 interface EventDetailHeader {
   eventId?: string;
   date?: Date;
@@ -28,7 +29,7 @@ export default function EventDetailHeader({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const user = useUserSession();
   const utils = api.useContext();
-
+  const router = useRouter();
   const handleAttendEvent = async () => {
     await attendEvent({
       eventId: eventId || "",
@@ -42,39 +43,49 @@ export default function EventDetailHeader({
     });
   };
 
-  const { mutate: autoAssignUsers, isLoading: isAutoAssignLoading, error: autoAssignError } = 
-    api.events.autoAssignUsersToProjects.useMutation({
-      onSuccess: (data:any) => {
-        console.log("Users successfully assigned to projects.");
-        // You may want to invalidate or refetch relevant queries here
-      },
-      onError: (error) => {
-        console.error("Error during auto-assignment:", error);
-      },
-    });
+  const {
+    mutate: autoAssignUsers,
+    isLoading: isAutoAssignLoading,
+    error: autoAssignError,
+  } = api.events.autoAssignUsersToProjects.useMutation({
+    onSuccess: (data: any) => {
+      console.log("Users successfully assigned to projects.");
+      // You may want to invalidate or refetch relevant queries here
+    },
+    onError: (error) => {
+      console.error("Error during auto-assignment:", error);
+    },
+  });
 
-  const { data: usersNotAttending, isLoading: usersNotAttendingEventIsLoading } = 
-    api.events.getAllUsersAttendingEventButNotInProjects.useQuery({
+  const {
+    data: usersNotAttending,
+    isLoading: usersNotAttendingEventIsLoading,
+  } = api.events.getAllUsersAttendingEventButNotInProjects.useQuery(
+    {
       eventId: "clmg0uk8h0006l008by9w1xpx", // Replace with the actual event ID
-    }, {
+    },
+    {
       onSuccess: (data) => {
-        console.log("Users not attending any project but part of the event:", data);
+        console.log(
+          "Users not attending any project but part of the event:",
+          data
+        );
       },
       onError: (error) => {
         console.error("Error fetching data:", error);
-      }
-    });
+      },
+    }
+  );
 
   const { mutateAsync: attendEvent, isLoading: joinEventIsLoading } =
     api.events.attendEvent.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
-          id: "1",//project.eventId, // todo: make this dynamic 
+          id: "1", //project.eventId, // todo: make this dynamic
         });
       },
     });
 
-  
   return (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
       <NewProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
@@ -106,9 +117,13 @@ export default function EventDetailHeader({
             <div className="flex space-x-4">
               <button
                 type="button"
-                className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${!isUserAttendEvent ? "bg-gray-600" : "bg-gray-400 cursor-not-allowed  disabled"}`}
-                onClick={() => handleAttendEvent() }
-                disabled={isUserAttendEvent} 
+                className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
+                  !isUserAttendEvent
+                    ? "bg-gray-600"
+                    : "disabled cursor-not-allowed  bg-gray-400"
+                }`}
+                onClick={() => handleAttendEvent()}
+                disabled={isUserAttendEvent}
               >
                 {isUserAttendEvent ? "Registered for event" : "Attend Event"}
               </button>
@@ -120,12 +135,19 @@ export default function EventDetailHeader({
                 New Project
               </button>
 
-              <button
+              {/* <button
                  type="button"
                  className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${!isUserAttendEvent ? "bg-gray-600" : "bg-gray-400 cursor-not-allowed  disabled"}`}
                  onClick={() => handleAssignUsers() }
               >
                 Auto Assign Users to Projects
+              </button> */}
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                onClick={() => router.push(`${eventId}/user-management`)}
+              >
+                User Management
               </button>
             </div>
           )}
