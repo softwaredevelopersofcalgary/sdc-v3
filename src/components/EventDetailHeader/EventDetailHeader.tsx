@@ -48,7 +48,6 @@ export default function EventDetailHeader({
             </div>
           )}
         </div>
-
         <div>
           {user && (
             <div className="flex space-x-4">
