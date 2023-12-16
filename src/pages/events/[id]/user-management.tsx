@@ -3,6 +3,7 @@ import Link from "next/link";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
+import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
 
 function UserManagement() {
   const router = useRouter();
@@ -22,10 +23,13 @@ function UserManagement() {
     },
     {
       onSuccess: (data) => {
-        // console.log(
-        //   "Users not attending any project but part of the event:",
-        //   data
-        // );
+        console.log(
+          "Users not attending any project but part of the event:",
+          data
+        );
+
+        console.log("Here's the event ID: ", eventId);
+      
       },
       onError: (error) => {
         console.error("Error fetching data:", error);
@@ -59,8 +63,18 @@ function UserManagement() {
     <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
       <div className="grid grid-cols-1 sm:grid-cols-3">
         <ul className="col-span-1 mb-4">
-          <li className="mb-2 flex justify-between">
-            <strong>Free Users in this event:</strong>
+          {usersNotAttending?.length === 0 && (
+            <li className="mt-3  mr-3 text-base text-green-500">
+              No users without projects!
+            </li>
+          )}
+          <li>
+          <strong>Users Not part of Any Project Yet:</strong>
+            <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
+              <MemberTagRow members={usersNotAttending} />
+            </div>
+          </li>
+          <li className="mt-4 mb-2 flex justify-between">
             <button
               type="button"
               className="mr-2 inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
@@ -69,15 +83,8 @@ function UserManagement() {
               Auto Assign
             </button>
           </li>
-          {usersNotAttending?.length === 0 && (
-            <li className="mt-3  mr-3 text-base text-green-500">
-              No free users!
-            </li>
-          )}
-          {usersNotAttending?.map((user, key) => (
-            <li key={key}>{user.name}</li>
-          ))}
         </ul>
+
         <div className="col-span-2 flex flex-col sm:flex-row">
           {event.data?.projects?.map((project) => (
             <Link
@@ -96,21 +103,11 @@ function UserManagement() {
                       : project.description.substring(0, 150) + "[...]"}
                   </p>
                   <div className="mt-3 text-base text-gray-400">
-                    <p>Members:</p>
-                    {project.members.length > 0 ? (
-                      project.members.map((member) => (
-                        <span
-                          key={member.id}
-                          className="mt-3 mr-3 text-base text-gray-800"
-                        >
-                          {member.name}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="mt-3  mr-3 text-base text-orange-500">
-                        No Members
-                      </span>
-                    )}
+                    <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
+                      <span className="font-bold">Members:</span>
+                      <MemberTagRow members={project.members} />
+                    </div>
+
                   </div>
                 </div>
                 <div className="mt-3 text-base text-gray-400">
