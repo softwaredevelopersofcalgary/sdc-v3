@@ -1,6 +1,7 @@
 export interface UserModel {
     id: string;
     isAttending?: boolean;
+    role?: string;
 }
 
 

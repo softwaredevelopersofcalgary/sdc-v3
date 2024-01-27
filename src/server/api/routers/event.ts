@@ -264,4 +264,28 @@ export const eventRouter = createTRPCRouter({
     return { status: "success", message: "Users assigned to projects successfully." };
   }),
 
+  // function to leave the event 
+
+  leaveEvent: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          memberOfEvents: {
+            disconnect: {
+              id: input.eventId,
+            },
+          },
+        },
+      });
+    }),
+
 });

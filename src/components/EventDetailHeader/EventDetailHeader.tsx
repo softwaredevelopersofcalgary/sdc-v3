@@ -29,6 +29,7 @@ export default function EventDetailHeader({
   const utils = api.useContext();
   const router = useRouter();
   const handleAttendEvent = async () => {
+    console.log("userID: ", user?.role);
     await attendEvent({
       eventId: eventId || "",
       userId: user?.id || "",
@@ -39,10 +40,26 @@ export default function EventDetailHeader({
     api.events.attendEvent.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
-          id: "1", //project.eventId, // todo: make this dynamic
+          id: eventId
         });
       },
     });
+  
+    const { mutateAsync: leaveEvent, isLoading: leaveEventIsLoading } =
+    api.events.leaveEvent.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: eventId,
+        });
+      },
+    });
+
+    const handleLeaveEvent = async () => {
+      await leaveEvent({
+        eventId: eventId || "",
+        userId: user?.id || "",
+      });
+    };
 
   return (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
@@ -77,13 +94,17 @@ export default function EventDetailHeader({
                 type="button"
                 className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
                   !isUserAttendEvent
-                    ? "bg-gray-600"
-                    : "disabled cursor-not-allowed  bg-gray-400"
+                    ? "bg-green-600"
+                    : "bg-red-400"
                 }`}
-                onClick={() => handleAttendEvent()}
-                disabled={isUserAttendEvent}
+                onClick={() => {
+                  isUserAttendEvent? handleLeaveEvent()
+                  : handleAttendEvent()
+                }}
               >
-                {isUserAttendEvent ? "Registered for event" : "Attend Event"}
+                { isUserAttendEvent ? 
+                  "Leave Event" : "Attend Event"
+                }
               </button>
               <button
                 type="button"
@@ -92,13 +113,18 @@ export default function EventDetailHeader({
               >
                 New Project
               </button>
-              <button
-                type="button"
-                className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                onClick={() => router.push(`${eventId}/user-management`)}
-              >
-                Manage Users
-              </button>
+              {
+                user?.role === "ADMIN" && (
+                  <button
+                    type="button"
+                    className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    onClick={() => router.push(`${eventId}/user-management`)}
+                  >
+                    Manage Users
+                  </button>
+                )
+              }
+              
             </div>
           )}
         </div>
