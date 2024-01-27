@@ -29,7 +29,6 @@ function UserManagement() {
         );
 
         console.log("Here's the event ID: ", eventId);
-      
       },
       onError: (error) => {
         console.error("Error fetching data:", error);
@@ -69,7 +68,7 @@ function UserManagement() {
             </li>
           )}
           <li>
-          <strong>Users Not part of Any Project Yet:</strong>
+            <strong>Users Not part of Any Project Yet:</strong>
             <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">
               <MemberTagRow members={usersNotAttending} />
             </div>
@@ -94,9 +93,6 @@ function UserManagement() {
             >
               <div className="min-w-[200px] rounded-lg border-[1.0px] border-gray-300 p-4">
                 <div className="mt-2 block">
-                  <p className="text-xl font-semibold text-gray-900">
-                    {project.location}
-                  </p>
                   <p className="mt-3 text-base text-gray-500">
                     {project.description.length <= 150
                       ? project.description
@@ -107,7 +103,6 @@ function UserManagement() {
                       <span className="font-bold">Members:</span>
                       <MemberTagRow members={project.members} />
                     </div>
-
                   </div>
                 </div>
                 <div className="mt-3 text-base text-gray-400">
