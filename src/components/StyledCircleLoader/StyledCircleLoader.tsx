@@ -3,9 +3,8 @@ import { CircleLoader } from "react-spinners";
 
 const override: CSSProperties = {
   display: "block",
-  margin: "100px auto",
+  margin: "auto",
   borderColor: "red",
-  padding: 100,
 };
 
 export default function StyledCircleLoader({
