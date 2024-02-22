@@ -3,11 +3,25 @@
 @tailwind utilities;
 
 button:disabled {
-    /* cursor: not-allowed; */
-    background-color: #cbd5e0; /* bg-gray-400 */
+  /* cursor: not-allowed; */
+  background-color: #cbd5e0; /* bg-gray-400 */
 }
 
-button:disabled:hover, button:disabled:focus {
-    background-color: #cbd5e0; /* Keeps the color consistent */
-    box-shadow: none; /* Removes any focus or hover effects */
+button:disabled:hover,
+button:disabled:focus {
+  background-color: #cbd5e0; /* Keeps the color consistent */
+  box-shadow: none; /* Removes any focus or hover effects */
+}
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
