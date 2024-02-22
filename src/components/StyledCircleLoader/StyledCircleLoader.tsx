@@ -13,13 +13,15 @@ export default function StyledCircleLoader({
   isLoading: boolean;
 }) {
   return (
-    <CircleLoader
-      color={"#6B7280"}
-      loading={isLoading}
-      cssOverride={override}
-      size={80}
-      aria-label="Loading Spinner"
-      data-testid="loader"
-    />
+    <div className="loader-overlay">
+      <CircleLoader
+        color={"#6B7280"}
+        loading={isLoading}
+        cssOverride={override}
+        size={80}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </div>
   );
 }
