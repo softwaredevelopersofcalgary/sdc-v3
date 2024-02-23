@@ -81,7 +81,8 @@ def setUpDB():
     autocommit = True,
     ssl_mode = "VERIFY_IDENTITY",
     ssl = {
-      "ca": "./cert.pem"
+      "CAFile": "./cert.pem",
+      "CAPath" : "./cert.pem"
     }
   )
 
