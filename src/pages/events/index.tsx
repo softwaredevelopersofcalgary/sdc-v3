@@ -55,11 +55,15 @@ export default function EventsPage() {
 
         <TabPanels>
           <TabPanel>
+          {upcoming && upcoming.length > 0 ? (
             <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
-              {upcoming?.map((post) => (
+              {upcoming.map((post) => (
                 <EventCard event={post} key={post.id} />
               ))}
             </div>
+            ) : (
+              <p>No upcoming events found.</p> // Placeholder or message when no events are available
+            )}
           </TabPanel>
           <TabPanel>
             <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
