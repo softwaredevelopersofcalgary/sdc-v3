@@ -63,7 +63,7 @@ model User {
   sessions      Session[]
   events        Event?    @relation(fields: [eventId], references: [id])
   eventId       String?
-  projects      Project[]
+  autherOfProjects      SuperProject[]
   likes         Like[]
   role          Role      @default(USER)
   Comment       Comment[]
@@ -116,42 +116,51 @@ model Event {
   updatedAt DateTime @updatedAt
 }
 
-model Project {
+model SuperProject {
   id          String  @id @default(cuid())
   name        String
   description String
   link        String?
   image       String?
-  eventId     String
-  event       Event   @relation(fields: [eventId], references: [id])
+  
   techs       Tech[]
-
-  members User[] @relation("ProjectMembers")
 
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  project Project[]
+
+  projectId String
+  @@index([authorId])
+}
+
+model Project{
+  id      String @id @default(cuid())
+  superProject SuperProject @relation(fields: [superProjectId], references: [id])
+  superProjectId String
+  event       Event   @relation(fields: eventId, references: id)
+  eventId     String
+  members User[] @relation("ProjectMembers")
   likes    Like[]
   comments Comment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([eventId])
-  @@index([authorId])
 }
 
 model Tech {
   id           String     @id @default(cuid())
   tech         MasterTech @relation(fields: [masterTechId], references: [id])
-  project      Project?   @relation(fields: [projectId], references: [id])
-  projectId    String?
+  superProject      SuperProject?   @relation(fields: [superProjectId], references: [id])
+  superProjectId    String?
   masterTechId String
   User         User?      @relation(fields: [userId], references: [id])
   userId       String?
 
   @@index([masterTechId])
-  @@index([projectId])
+  @@index([superProjectId])
   @@index([userId])
 }
 
