@@ -25,7 +25,7 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const currentUser = ctx.session?.user;
@@ -113,7 +113,7 @@ export const eventRouter = createTRPCRouter({
 
         const projectsWithUser = event?.projects?.map((project) => {
           const isMember = project?.members?.some(
-            (member) => member.id === currentUser.id
+            (member) => member.id === currentUser.id,
           );
 
           return {
@@ -123,7 +123,7 @@ export const eventRouter = createTRPCRouter({
         });
 
         const isUserPartOfAnyProject = projectsWithUser?.some(
-          (project) => project.isMember
+          (project) => project.isMember,
         );
 
         return {
@@ -156,7 +156,7 @@ export const eventRouter = createTRPCRouter({
       z.object({
         eventId: z.string(),
         userId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.user.update({
@@ -194,7 +194,7 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         eventId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const usersAttendingEventNotInProjects = await ctx.prisma.user.findMany({
@@ -256,20 +256,23 @@ export const eventRouter = createTRPCRouter({
       }
 
       // Assigning users to projects
-      const updateUserPromises = usersInEventNotInProjects.map(
-        (user, index) => {
+      const updateUserPromises = usersInEventNotInProjects
+        .map((user, index) => {
           // console.log(user.techs);
-          const projectId = projects[index % projects.length]!.id; // Round-robin assignment
-          return ctx.prisma.user.update({
-            where: { id: user.id },
-            data: {
-              memberOfProjects: {
-                connect: { id: projectId },
+          const project = projects[index % projects.length]; // Round-robin assignment
+          if (project !== undefined) {
+            return ctx.prisma.user.update({
+              where: { id: user.id },
+              data: {
+                memberOfProjects: {
+                  connect: { id: project.id },
+                },
               },
-            },
-          });
-        }
-      );
+            });
+          }
+          return null;
+        })
+        .filter((p) => p !== null);
 
       await Promise.all(updateUserPromises);
 
@@ -286,7 +289,7 @@ export const eventRouter = createTRPCRouter({
       z.object({
         eventId: z.string(),
         userId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.user.update({
