@@ -7,6 +7,7 @@ import { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import StyledCircleLoader from "../StyledCircleLoader/StyledCircleLoader";
 interface EventDetailHeader {
   eventId?: string;
   date?: Date;
@@ -27,15 +28,17 @@ export default function EventDetailHeader({
   isUserAttendEvent,
 }: EventDetailHeader) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const user = useUserSession();
   const utils = api.useContext();
   const router = useRouter();
   const handleAttendEvent = async () => {
-    console.log("userID: ", user?.role);
+    setLoading(true);
     await attendEvent({
       eventId: eventId || "",
       userId: user?.id || "",
     });
+    setLoading(false);
   };
 
   const { mutateAsync: attendEvent, isLoading: joinEventIsLoading } =
@@ -63,7 +66,9 @@ export default function EventDetailHeader({
     });
   };
 
-  return (
+  return loading ? (
+    <StyledCircleLoader />
+  ) : (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
       <NewProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
 
