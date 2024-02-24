@@ -47,8 +47,8 @@ export default function PillButton({
       {label}
     </button>
 
-      {!isMember && isUserPartOfAnyProject && showTooltip &&
-        <div className="absolute bg-gray-400 text-white p-2 rounded mt-2 bottom-0 right-0 w-36">
+      {!isMember && isUserPartOfAnyProject && true &&
+        <div className="absolute bg-gray-400 text-white p-2 rounded mt-2 bottom-0 left-36 w-1/2">
           {"You're already a member of a different project"}
         </div>
       }
