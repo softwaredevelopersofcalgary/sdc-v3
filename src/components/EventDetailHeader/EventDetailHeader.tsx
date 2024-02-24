@@ -1,4 +1,5 @@
-//@ts-nocheck
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import useUserSession from "@/hooks/useUserSession";
 import { format } from "date-fns";

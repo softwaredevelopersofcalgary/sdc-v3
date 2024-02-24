@@ -1,4 +1,5 @@
-//@ts-nocheck
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
 import { format } from "date-fns";
 import Link from "next/link";
