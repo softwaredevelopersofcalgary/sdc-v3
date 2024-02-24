@@ -258,7 +258,7 @@ export const eventRouter = createTRPCRouter({
       // Assigning users to projects
       const updateUserPromises = usersInEventNotInProjects.map(
         (user, index) => {
-          console.log(user.techs);
+          // console.log(user.techs);
           const projectId = projects[index % projects.length]!.id; // Round-robin assignment
           return ctx.prisma.user.update({
             where: { id: user.id },
