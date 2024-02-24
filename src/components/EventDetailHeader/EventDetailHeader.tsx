@@ -96,10 +96,17 @@ export default function EventDetailHeader({
                 className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
                   !isUserAttendEvent ? "bg-green-600" : "bg-red-400"
                 }`}
-                onClick={async () => {
-                  isUserAttendEvent
-                    ? await handleLeaveEvent()
-                    : await handleAttendEvent();
+                onClick={() => {
+                  (async () => {
+                    if (isUserAttendEvent) {
+                      await handleLeaveEvent();
+                    } else {
+                      await handleAttendEvent();
+                    }
+                  })()
+                  .catch(error => {
+                    console.error("Error handling click event:", error);
+                  });
                   return;
                 }}
               >
@@ -116,8 +123,8 @@ export default function EventDetailHeader({
                 <button
                   type="button"
                   className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  onClick={() => void router.push(`${eventId}/user-management`)}
-                >
+                  onClick={() => void router.push(`${eventId ?? ''}/user-management`)}
+                  >
                   Manage Users
                 </button>
               )}

@@ -43,10 +43,10 @@ function UserManagement() {
   );
 
   const handleAssignUsers = async () => {
-    await autoAssignUsers({
+    autoAssignUsers({
       eventId,
     });
-    event.refetch();
+    await event.refetch();
   };
 
   const { mutate: autoAssignUsers, isLoading: isAutoAssignLoading } =
@@ -84,7 +84,11 @@ function UserManagement() {
             <button
               type="button"
               className="mr-2 inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              onClick={async () => await handleAssignUsers()}
+              onClick={() => {
+                handleAssignUsers().catch((error) => {
+                  console.error("Failed to assign users:", error);
+                });
+              }}            
             >
               Auto Assign
             </button>
