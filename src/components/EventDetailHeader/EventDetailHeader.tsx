@@ -36,29 +36,29 @@ export default function EventDetailHeader({
       userId: user?.id || "",
     });
 
+    const consoleAllUsersAttendingEventWithoutProj = async () => {
+      const data =
+        await api.events.getAllUsersAttendingEventButNotInProjects.useQuery(
+          {
+            eventId: "1", // Replace with the actual event ID
+          },
+          {
+            onSuccess: (data) => {
+              console.log(
+                "Users not attending any project but part of the event:",
+                data
+              );
+            },
+            onError: (error) => {
+              console.error("Error fetching data:", error);
+            },
+          }
+        );
+
+      console.log("data: ", data);
+    };
+
     await consoleAllUsersAttendingEventWithoutProj();
-  };
-
-  const consoleAllUsersAttendingEventWithoutProj = async () => {
-    const data =
-      await api.events.getAllUsersAttendingEventButNotInProjects.useQuery(
-        {
-          eventId: "1", // Replace with the actual event ID
-        },
-        {
-          onSuccess: (data) => {
-            console.log(
-              "Users not attending any project but part of the event:",
-              data
-            );
-          },
-          onError: (error) => {
-            console.error("Error fetching data:", error);
-          },
-        }
-      );
-
-    console.log("data: ", data);
   };
 
   const {
