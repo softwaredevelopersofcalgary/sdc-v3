@@ -84,7 +84,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       },
     });
 
-
   const handleJoinProject = async () => {
     await joinProject({
       projectId: project.id,
@@ -98,6 +97,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       userId: user?.id || "",
     });
   };
+
 
   const handleUpvote = async () => {
     await mutateAsync({
@@ -133,7 +133,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   isMember={project?.isMember}
                   isUserPartOfAnyProject={project.isUserPartOfAnyProject}
                   isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                  handleClick={
+                  handleClick = {
                     joinProjectIsLoading || leaveProjectIsLoading
                       ? () => void null
                       : project?.isMember

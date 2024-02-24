@@ -99,16 +99,16 @@ export const eventRouter = createTRPCRouter({
           members: {
             select: {
               id: true,
-              name: true
-            }
+              name: true,
+            },
           },
         },
       });
 
       if (currentUser) {
-        const membersWithUserStatus = event?.members?.map(member => ({
+        const membersWithUserStatus = event?.members?.map((member) => ({
           ...member,
-          isCurrentUserMember: member.id === currentUser.id
+          isCurrentUserMember: member.id === currentUser.id,
         }));
 
         const projectsWithUser = event?.projects?.map((project) => {
@@ -150,7 +150,7 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
-  
+
   attendEvent: protectedProcedure
     .input(
       z.object({
@@ -191,36 +191,115 @@ export const eventRouter = createTRPCRouter({
   //   }),
 
   getAllUsersAttendingEventButNotInProjects: protectedProcedure
-  .input(
-    z.object({
-      eventId: z.string(),
-    })
-  )
-  .query(async ({ ctx, input }) => {
-    const usersAttendingEventNotInProjects = await ctx.prisma.user.findMany({
-      where: {
-        // Checking if the user is part of the specific event
-        memberOfEvents: {
-          some: {
-            id: input.eventId,
+    .input(
+      z.object({
+        eventId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const usersAttendingEventNotInProjects = await ctx.prisma.user.findMany({
+        where: {
+          memberOfEvents: {
+            some: {
+              id: input.eventId,
+            },
+          },
+          NOT: {
+            projects: {
+              some: {
+                eventId: input.eventId,
+              },
+            },
           },
         },
-        // Ensuring the user is not part of any project
-        memberOfProjects: {
-          none: {},
+        select: {
+          name: true,
+          // email: true,
         },
-      },
-      select: {
-        name: true,
-        email: true,
+      });
+
+      return usersAttendingEventNotInProjects;
+    }),
+
+  autoAssignUsersToProjects: protectedProcedure
+    .input(z.object({ eventId: z.string() })) // Taking event ID as input
+    .mutation(async ({ ctx, input }) => {
+      // Fetch users attending the specific event and not in any project
+      const usersInEventNotInProjects = await ctx.prisma.user.findMany({
+        where: {
+          memberOfEvents: {
+            some: {
+              id: input.eventId, // Filtering users based on event participation
+            },
+          },
+          NOT: {
+            projects: {
+              some: { eventId: input.eventId }, // Ensuring they are not part of any project
+            },
+          },
+        },
+      });
+
+      // Fetch existing projects
+      const projects = await ctx.prisma.project.findMany({
+        where: {
+          // Assuming there's a relation or field that links projects to events
+          eventId: input.eventId, // Filter projects by the event
+        },
+      });
+
+      if (projects.length === 0) {
+        return {
+          status: "error",
+          message: "No projects available for assignment.",
+        };
       }
-    });
 
-    return usersAttendingEventNotInProjects;
-  }),
+      // Assigning users to projects
+      const updateUserPromises = usersInEventNotInProjects.map(
+        (user, index) => {
+          console.log(user.techs);
+          const projectId = projects[index % projects.length]!.id; // Round-robin assignment
+          return ctx.prisma.user.update({
+            where: { id: user.id },
+            data: {
+              memberOfProjects: {
+                connect: { id: projectId },
+              },
+            },
+          });
+        }
+      );
 
+      await Promise.all(updateUserPromises);
+
+      return {
+        status: "success",
+        message: "Users assigned to projects successfully.",
+      };
+    }),
+
+  // function to leave the event
+
+  leaveEvent: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          memberOfEvents: {
+            disconnect: {
+              id: input.eventId,
+            },
+          },
+        },
+      });
+    }),
 });
-
-// we want to get the memebers of the event 
-// and then we want to loop through this to find who's attending the event 
-// 

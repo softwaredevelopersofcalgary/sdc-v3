@@ -3,7 +3,7 @@ import React from "react";
 import MemberTag from "./MemberTag";
 
 interface MemberTagRowProps {
-  members: Member[] | undefined;
+  members: any[] | undefined;
 }
 
 export default function MemberTagRow({ members }: MemberTagRowProps) {

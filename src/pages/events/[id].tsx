@@ -8,11 +8,10 @@ import { useRouter } from "next/router";
 import React from "react";
 
 export default function EventDetailPage() {
-
   type Member = {
     name: string | null;
     id: string;
-    isCurrentUserMember?: boolean;  // Optional property
+    isCurrentUserMember?: boolean; // Optional property
   };
   const router = useRouter();
   const event = api.events.findUnique.useQuery(
@@ -26,22 +25,24 @@ export default function EventDetailPage() {
   if (event.isLoading)
     return <StyledCircleLoader isLoading={event.isLoading} />;
 
-    return (
-      <div className="p-4">
-        <EventDetailHeader
-          eventId={router.query.id as string}
-          date={event.data?.date}
-          name={event.data?.name}
-          description={event.data?.description}
-          location={event.data?.location}
-          startTime={event.data?.startTime}
-          isUserAttendEvent={
-            (event.data?.members as Member[]).some(member => member.isCurrentUserMember) ?? false
-          } 
-        />
-        <ProjectCards
-          projects={event.data?.projects as unknown as ProjectModel[]}
-        />
-      </div>
-    );
+  return (
+    <div className="p-4">
+      <EventDetailHeader
+        eventId={router.query.id as string}
+        date={event.data?.date}
+        name={event.data?.name}
+        description={event.data?.description}
+        location={event.data?.location}
+        startTime={event.data?.startTime}
+        isUserAttendEvent={
+          (event.data?.members as Member[])?.some(
+            (member) => member.isCurrentUserMember
+          ) ?? false
+        }
+      />
+      <ProjectCards
+        projects={event.data?.projects as unknown as ProjectModel[]}
+      />
+    </div>
+  );
 }
