@@ -6,8 +6,6 @@ import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoad
 import { IsUserEditor } from "@/hooks/IsUserEditor";
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
-import { format } from "date-fns";
-import Link from "next/link";
 import React, { useState } from "react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import EventCard from "./EventCard";
@@ -36,7 +34,7 @@ export default function EventsPage() {
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
+    <div className="bg-white px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pb-28 lg:pt-24">
       <NewEventModal isOpen={isOpen} setIsOpen={setIsOpen} />
       {userIsEditor && user && (
         <div className="flex flex-row items-center justify-end">
@@ -59,14 +57,14 @@ export default function EventsPage() {
           <TabPanel>
             <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
               {upcoming?.map((post) => (
-                <EventCard event={post} />
+                <EventCard event={post} key={post.id} />
               ))}
             </div>
           </TabPanel>
           <TabPanel>
             <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
               {past?.map((post) => (
-                <EventCard event={post} />
+                <EventCard event={post} key={post.id} />
               ))}
             </div>
           </TabPanel>
