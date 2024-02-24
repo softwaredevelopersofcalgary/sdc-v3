@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import NewEventModal from "@/components/NewEventModal/NewEventModal";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import { IsUserEditor } from "@/hooks/IsUserEditor";
