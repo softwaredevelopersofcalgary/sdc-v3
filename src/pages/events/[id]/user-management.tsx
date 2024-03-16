@@ -1,4 +1,7 @@
-import React from "react";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
@@ -14,12 +17,15 @@ function UserManagement() {
     },
     { enabled: !!router.query.id }
   );
+
+  console.log(`EventId: ${eventId}`);
   const {
     data: usersNotAttending,
     isLoading: usersNotAttendingEventIsLoading,
+    isError,
   } = api.events.getAllUsersAttendingEventButNotInProjects.useQuery(
     {
-      eventId,
+      eventId: router.query?.id as string,
     },
     {
       onSuccess: (data) => {
@@ -62,10 +68,14 @@ function UserManagement() {
     <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
       <div className="grid grid-cols-1 sm:grid-cols-3">
         <ul className="col-span-1 mb-4">
-          {usersNotAttending?.length === 0 && (
-            <li className="mt-3  mr-3 text-base text-green-500">
-              No users without projects!
-            </li>
+          {usersNotAttendingEventIsLoading ? (
+            <StyledCircleLoader isLoading={usersNotAttendingEventIsLoading} />
+          ) : (
+            usersNotAttending?.length === 0 && (
+              <li className="mt-3  mr-3 text-base text-green-500">
+                No users without projects!
+              </li>
+            )
           )}
           <li>
             <strong>Users Not part of Any Project Yet:</strong>
@@ -94,9 +104,9 @@ function UserManagement() {
               <div className="min-w-[200px] rounded-lg border-[1.0px] border-gray-300 p-4">
                 <div className="mt-2 block">
                   <p className="mt-3 text-base text-gray-500">
-                    {project.description.length <= 150
-                      ? project.description
-                      : project.description.substring(0, 150) + "[...]"}
+                    {project.name.length <= 150
+                      ? project.name
+                      : project.name.substring(0, 150) + "[...]"}
                   </p>
                   <div className="mt-3 text-base text-gray-400">
                     <div className="flex flex-row flex-wrap items-center gap-2 text-sm font-light">

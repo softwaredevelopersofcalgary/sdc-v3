@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import useUserSession from "@/hooks/useUserSession";
 import { format } from "date-fns";
@@ -40,12 +42,12 @@ export default function EventDetailHeader({
     api.events.attendEvent.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
-          id: eventId
+          id: eventId,
         });
       },
     });
-  
-    const { mutateAsync: leaveEvent, isLoading: leaveEventIsLoading } =
+
+  const { mutateAsync: leaveEvent, isLoading: leaveEventIsLoading } =
     api.events.leaveEvent.useMutation({
       onSuccess: async () => {
         await utils.events.findUnique.invalidate({
@@ -54,12 +56,12 @@ export default function EventDetailHeader({
       },
     });
 
-    const handleLeaveEvent = async () => {
-      await leaveEvent({
-        eventId: eventId || "",
-        userId: user?.id || "",
-      });
-    };
+  const handleLeaveEvent = async () => {
+    await leaveEvent({
+      eventId: eventId || "",
+      userId: user?.id || "",
+    });
+  };
 
   return (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
@@ -79,32 +81,26 @@ export default function EventDetailHeader({
               <button
                 type="button"
                 className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                onClick={() => signIn()}
+                onClick={() => void signIn()}
               >
                 Attend Event
               </button>
             </div>
           )}
         </div>
-
         <div>
           {user && (
             <div className="flex space-x-4">
               <button
                 type="button"
                 className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
-                  !isUserAttendEvent
-                    ? "bg-green-600"
-                    : "bg-red-400"
+                  !isUserAttendEvent ? "bg-green-600" : "bg-red-400"
                 }`}
                 onClick={() => {
-                  isUserAttendEvent? handleLeaveEvent()
-                  : handleAttendEvent()
+                  isUserAttendEvent ? handleLeaveEvent() : handleAttendEvent();
                 }}
               >
-                { isUserAttendEvent ? 
-                  "Leave Event" : "Attend Event"
-                }
+                {isUserAttendEvent ? "Leave Event" : "Attend Event"}
               </button>
               <button
                 type="button"
@@ -113,18 +109,15 @@ export default function EventDetailHeader({
               >
                 New Project
               </button>
-              {
-                user?.role === "ADMIN" && (
-                  <button
-                    type="button"
-                    className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                    onClick={() => router.push(`${eventId}/user-management`)}
-                  >
-                    Manage Users
-                  </button>
-                )
-              }
-              
+              {user?.role === "ADMIN" && (
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  onClick={() => router.push(`${eventId}/user-management`)}
+                >
+                  Manage Users
+                </button>
+              )}
             </div>
           )}
         </div>

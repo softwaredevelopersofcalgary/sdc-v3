@@ -11,8 +11,10 @@ import random
 load_dotenv()
 
 def storeEvents(eventListings, cursor, connection):
+  linkPrefix = "https://www.meetup.com"
+
   for event in eventListings:    
-    date = event.find("time").text.strip()
+    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
     dateObj = formatDate(date)
 
     mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
@@ -27,12 +29,14 @@ def storeEvents(eventListings, cursor, connection):
 
     isFeatured = True
 
-    name = "Project-based Mini-Hackathon!"
-    location = "Central Library, Calgary, AB"
+    name = event.find("span", class_="visibility--a11yHide").text.strip()
+
+    location = event.find("div", class_="venueDisplay").text.strip()
 
     updatedAt = datetime.now()
 
-    link = event["href"]
+    link = event.find("a", class_="eventCard--link")["href"]
+    link = linkPrefix + link
 
     description, imageUrl = getDescAndImgUrl(link)
     print ("Creating new event: ")
@@ -79,11 +83,10 @@ def setUpDB():
     passwd= os.getenv("PASSWORD"),
     db= os.getenv("DATABASE"),
     autocommit = True,
-    ssl_mode = "VERIFY_IDENTITY",
-    ssl = {
-      "CAFile": "./cert.pem",
-      "CAPath" : "./cert.pem"
-    }
+    # ssl_mode = "VERIFY_IDENTITY",
+    # ssl      = {
+    #     "ca": "/etc/ssl/cert.pem"
+    # }
   )
 
   cursor = connection.cursor()
@@ -92,12 +95,10 @@ def setUpDB():
 def getEventData():
   url = "https://www.meetup.com/software-developers-of-calgary/events/"
   response = requests.get(url)
-  soup = BeautifulSoup(response.content, "html.parser")
-  regex = re.compile(
-    r"https://www\.meetup\.com/software-developers-of-calgary/events/\d+/"
-  )
 
-  eventListings = soup.find_all("a", href=regex)
+  soup = BeautifulSoup(response.content, "html.parser")
+
+  eventListings = soup.find_all("div", class_="eventCard")
 
   return eventListings
 
@@ -111,8 +112,7 @@ def getDescAndImgUrl(eventLink):
 
   # for some reason, the description has a max of 191 characters on the DB
   # todo: change the description table to allow for more characters
-  text_content = [p.get_text(strip=True) for p in descriptionHtml.find_all('p')][:191]
-  description = ' '.join(text_content)
+  description = (descriptionHtml.get_text() if descriptionHtml else "")[:191]
 
   return description, imageUrl
 
