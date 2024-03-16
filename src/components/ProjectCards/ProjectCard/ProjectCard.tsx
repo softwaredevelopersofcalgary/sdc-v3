@@ -16,15 +16,17 @@ import { useForm } from "react-hook-form";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
 import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
+import { boolean } from "zod";
 
 interface ProjectCardProps {
   project: ProjectModel;
+  isUserAttendEvent: boolean;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardProps) {
   const utils = api.useContext();
   const user = useUserSession();
-
+  const isUserAttendingEvent: boolean = isUserAttendEvent;
   const { handleSubmit, register, reset } = useForm();
   const { mutateAsync: createComment, isLoading } =
     api.projects.createComment.useMutation({
@@ -84,11 +86,36 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       },
     });
 
+  const handleAttendEvent = async () => {
+    console.log("userID: ", user?.role);
+    await attendEvent({
+      eventId: project.eventId || "",
+      userId: user?.id || "",
+    });
+  };
+
+  const { mutateAsync: attendEvent, isLoading: joinEventIsLoading } =
+    api.events.attendEvent.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+  });
+
   const handleJoinProject = async () => {
     await joinProject({
       projectId: project.id,
       userId: user?.id || "",
-    });
+  });
+
+    // add user to the event if not already not attending 
+    if (!isUserAttendingEvent) {
+      await attendEvent({
+        eventId: project.eventId,
+        userId: user?.id || "",
+      });
+    }
   };
 
   const handleLeaveProject = async () => {

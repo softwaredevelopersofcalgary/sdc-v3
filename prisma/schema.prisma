@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider          = "mysql"
+  provider          = "cockroachdb"
   relationMode      = "prisma"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.String annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
@@ -30,12 +30,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String? @db.String
+  access_token      String? @db.String
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String? @db.String
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -102,7 +102,7 @@ model Event {
   name        String
   date        DateTime
   location    String
-  description String @db.VarChar(1000)
+  description String @db.String(1000)
   startTime   String
 
   image      String?

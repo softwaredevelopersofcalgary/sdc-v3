@@ -102,7 +102,17 @@ export default function EventDetailHeader({
                   !isUserAttendEvent ? "bg-green-600" : "bg-red-400"
                 }`}
                 onClick={() => {
-                  isUserAttendEvent ? handleLeaveEvent() : handleAttendEvent();
+                  (async () => {
+                    if (isUserAttendEvent) {
+                      await handleLeaveEvent();
+                    } else {
+                      await handleAttendEvent();
+                    }
+                  })()
+                  .catch(error => {
+                    console.error("Error handling click event:", error);
+                  });
+                  return;
                 }}
               >
                 {isUserAttendEvent ? "Leave Event" : "Attend Event"}
@@ -118,8 +128,8 @@ export default function EventDetailHeader({
                 <button
                   type="button"
                   className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  onClick={() => router.push(`${eventId}/user-management`)}
-                >
+                  onClick={() => void router.push(`${eventId ?? ''}/user-management`)}
+                  >
                   Manage Users
                 </button>
               )}

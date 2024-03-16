@@ -1,9 +1,8 @@
 import { Member } from "@/components/ProjectCards/Project.model";
 import React from "react";
 import MemberTag from "./MemberTag";
-
 interface MemberTagRowProps {
-  members: any[] | undefined;
+  members: Member[] | undefined;
 }
 
 export default function MemberTagRow({ members }: MemberTagRowProps) {

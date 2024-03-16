@@ -1,14 +1,14 @@
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import requests
 from bs4 import BeautifulSoup
 import re
 import os
-import MySQLdb
+import psycopg2
 from datetime import datetime
 import time
 import random
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 def storeEvents(eventListings, cursor, connection):
   linkPrefix = "https://www.meetup.com"
@@ -25,7 +25,7 @@ def storeEvents(eventListings, cursor, connection):
       print("Event already in DB")
       continue
 
-    cuid = generateCuid();
+    cuid = generateCuid()
 
     isFeatured = True
 
@@ -76,18 +76,7 @@ def clearEventsDB(cursor, connection):
   connection.commit()
 
 def setUpDB():
-  print (os.getenv("HOST"))
-  connection = MySQLdb.connect(
-    host= os.getenv("HOST"),
-    user=os.getenv("USERNAME"),
-    passwd= os.getenv("PASSWORD"),
-    db= os.getenv("DATABASE"),
-    autocommit = True,
-    # ssl_mode = "VERIFY_IDENTITY",
-    # ssl      = {
-    #     "ca": "/etc/ssl/cert.pem"
-    # }
-  )
+  connection = psycopg2.connect(os.getenv("DATABASE_URL")  )
 
   cursor = connection.cursor()
   return cursor, connection
@@ -133,8 +122,6 @@ def closeDB(cursor, connection):
   connection.close()
 
 # MAIN:
-print("Host: ")
-print(os.getenv("HOST"))
 cursor, connection = setUpDB()
 eventListings = getEventData()
 storeEvents(eventListings, cursor, connection)

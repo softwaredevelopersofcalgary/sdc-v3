@@ -5,13 +5,23 @@ import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
-interface EventProps {
-  event: object;
+interface Event {
+  id?: string | number;
+  date?: string;
+  startTime?: string;
+  name?: string;
+  description?: string;
 }
+
+interface EventProps {
+  event?: Event;
+}
+
 
 export default function EventCard({ event }: EventProps) {
   return (
-    <Link href={`/events/${event.id}`} key={event.id}>
+    event?.id && (
+    <Link href={`/events/${String(event.id)}`} key={String(event.id)}>
       <div className="min-w-[200px] rounded-lg border-[1.0px] border-gray-300 p-4">
         <p className="text-sm text-gray-500">
           {format(new Date(event.date), "yyyy/MM/dd")} - {event.startTime}
@@ -31,5 +41,5 @@ export default function EventCard({ event }: EventProps) {
         </div>
       </div>
     </Link>
-  );
+  ) || <div>No events found</div> );
 }

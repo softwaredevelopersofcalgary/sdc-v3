@@ -6,8 +6,6 @@ import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoad
 import { IsUserEditor } from "@/hooks/IsUserEditor";
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
-import { format } from "date-fns";
-import Link from "next/link";
 import React, { useState } from "react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, ChakraProvider } from "@chakra-ui/react";
 import EventCard from "./EventCard";
