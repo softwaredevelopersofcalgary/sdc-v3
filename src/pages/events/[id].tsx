@@ -35,10 +35,9 @@ export default function EventDetailPage() {
         location={event.data?.location}
         startTime={event.data?.startTime}
         isUserAttendEvent={
-          (event.data?.members as Member[])?.some(
-            (member) => member.isCurrentUserMember
-          ) ?? false
+          event.data?.members?.some((member: Member) => member.isCurrentUserMember) ?? false
         }
+        
       />
       <ProjectCards
         projects={event.data?.projects as unknown as ProjectModel[]}
