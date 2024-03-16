@@ -58,14 +58,16 @@ export default function EventsPage() {
             <TabPanel>
               <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
                 {upcoming?.map((post) => (
-                  <EventCard event={post} />
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  <EventCard key={index}  event={post} />
                 ))}
               </div>
             </TabPanel>
             <TabPanel>
               <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
                 {past?.map((post) => (
-                  <EventCard event={post} />
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  <EventCard key={index}  event={post} />
                 ))}
               </div>
             </TabPanel>
