@@ -11,10 +11,11 @@ import random
 load_dotenv(find_dotenv())
 
 def storeEvents(eventListings, cursor, connection):
+  print("Attempting to store events")
   linkPrefix = "https://www.meetup.com"
 
   for event in eventListings:    
-    date = event.find("span", class_="eventTimeDisplay-startDate").text.strip()
+    date = event.find("time").text.strip()
     dateObj = formatDate(date)
 
     mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
@@ -29,13 +30,13 @@ def storeEvents(eventListings, cursor, connection):
 
     isFeatured = True
 
-    name = event.find("span", class_="visibility--a11yHide").text.strip()
+    name = "Project-based Mini-Hackathon"
 
-    location = event.find("div", class_="venueDisplay").text.strip()
+    location = "Central Library, Calgary, AB"
 
     updatedAt = datetime.now()
 
-    link = event.find("a", class_="eventCard--link")["href"]
+    link = event.find("a")["href"]
     link = linkPrefix + link
 
     description, imageUrl = getDescAndImgUrl(link)
@@ -54,9 +55,7 @@ def formatDate(date):
     dateEdited = dateEdited.replace("MDT", "-0600")
   elif "MST" in dateEdited:
     dateEdited = dateEdited.replace("MST", "-0700")
-
   dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %z')
-
   return dateObj
 
 def isEventInDB(cursor, connection, date):
@@ -76,18 +75,21 @@ def clearEventsDB(cursor, connection):
   connection.commit()
 
 def setUpDB():
+  print ("Setting up DB")
   connection = psycopg2.connect(os.getenv("DATABASE_URL")  )
 
   cursor = connection.cursor()
   return cursor, connection
 
 def getEventData():
+  print ("Getting events from MeetUp")
   url = "https://www.meetup.com/software-developers-of-calgary/events/"
   response = requests.get(url)
 
   soup = BeautifulSoup(response.content, "html.parser")
 
-  eventListings = soup.find_all("div", class_="eventCard")
+  eventListings = soup.find_all("a", href=re.compile("/software-developers-of-calgary/events/(?!calendar|\?type=upcoming)[^/]+"))
+  print (f"Found {len(eventListings)} events")
 
   return eventListings
 
