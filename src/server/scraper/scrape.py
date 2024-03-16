@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import os
-import MySQLdb
+import psycopg2
 from datetime import datetime
 import time
 import random
@@ -25,7 +25,7 @@ def storeEvents(eventListings, cursor, connection):
       print("Event already in DB")
       continue
 
-    cuid = generateCuid();
+    cuid = generateCuid()
 
     isFeatured = True
 
@@ -77,17 +77,7 @@ def clearEventsDB(cursor, connection):
 
 def setUpDB():
   print (os.getenv("HOST"))
-  connection = MySQLdb.connect(
-    host= os.getenv("HOST"),
-    user=os.getenv("USERNAME"),
-    passwd= os.getenv("PASSWORD"),
-    db= os.getenv("DATABASE"),
-    autocommit = True,
-    # ssl_mode = "VERIFY_IDENTITY",
-    # ssl      = {
-    #     "ca": "/etc/ssl/cert.pem"
-    # }
-  )
+  connection = psycopg2.connect(os.environ("DATABASE_URL")  )
 
   cursor = connection.cursor()
   return cursor, connection
