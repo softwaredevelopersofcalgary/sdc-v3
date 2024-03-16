@@ -7,124 +7,174 @@ import psycopg2
 from datetime import datetime
 import time
 import random
+import asyncio
+from prisma import Prisma
 
 load_dotenv(find_dotenv())
 
-def storeEvents(eventListings, cursor, connection):
-  print("Attempting to store events")
-  linkPrefix = "https://www.meetup.com"
 
-  for event in eventListings:    
-    date = event.find("time").text.strip()
-    dateObj = formatDate(date)
+async def storeEvents(eventListings, cursor, connection):
+    prisma = Prisma()
+    await prisma.connect()
 
-    mysqlDateStr = dateObj.strftime('%Y-%m-%d %H:%M:%S') 
-    startTime = dateObj.strftime('%I:%M %p')
+    print("Attempting to store events")
+    linkPrefix = "https://www.meetup.com"
 
-    # if there's an event on that same day, then we take it out 
-    if isEventInDB(cursor, connection, mysqlDateStr + ".000"):
-      print("Event already in DB")
-      continue
+    for event in eventListings:
+        date = event.find("time").text.strip()
+        dateObj = formatDate(date)
 
-    cuid = generateCuid()
+        mysqlDateStr = dateObj.strftime("%Y-%m-%d %H:%M:%S")
+        startTime = dateObj.strftime("%I:%M %p")
 
-    isFeatured = True
+        # if there's an event on that same day, then we take it out
+        if isEventInDB(cursor, connection, mysqlDateStr + ".000"):
+            print("Event already in DB")
+            continue
 
-    name = "Project-based Mini-Hackathon"
+        cuid = generateCuid()
 
-    location = "Central Library, Calgary, AB"
+        isFeatured = True
 
-    updatedAt = datetime.now()
+        name = "Project-based Mini-Hackathon"
 
-    link = event.find("a")["href"]
-    link = linkPrefix + link
+        location = "Central Library, Calgary, AB"
 
-    description, imageUrl = getDescAndImgUrl(link)
-    print ("Creating new event: ")
-    print (mysqlDateStr)
+        updatedAt = datetime.now()
 
-    insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    recordToInsert = (cuid, name, mysqlDateStr, location, description, startTime, imageUrl,isFeatured, updatedAt)
-    
-    cursor.execute(insertQuery, recordToInsert)
-    connection.commit()
+        link = event["href"]
+        link = linkPrefix + link
+
+        description, imageUrl = getDescAndImgUrl(link)
+        print("Creating new event: ")
+        print(mysqlDateStr)
+        event = await prisma.event.create(
+            data={
+                "id": cuid,
+                "name": name,
+                "date": date,
+                "location": location,
+                "description": description,
+                "startTime": startTime,
+                "image": imageUrl,
+                "isFeatured": isFeatured,
+                "updatedAt": updatedAt,
+            }
+        )
+        await prisma.disconnect()
+
+        # insertQuery = """ INSERT INTO Event (id, name, date, location, description, startTime, image, isFeatured, updatedAt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        # recordToInsert = (
+        #     cuid,
+        #     name,
+        #     mysqlDateStr,
+        #     location,
+        #     description,
+        #     startTime,
+        #     imageUrl,
+        #     isFeatured,
+        #     updatedAt,
+        # )
+
+        # cursor.execute(insertQuery, recordToInsert)
+        # connection.commit()
+
 
 def formatDate(date):
-  dateEdited = re.sub('<span>|</span>', '', date)
-  if "MDT" in dateEdited:
-    dateEdited = dateEdited.replace("MDT", "-0600")
-  elif "MST" in dateEdited:
-    dateEdited = dateEdited.replace("MST", "-0700")
-  dateObj = datetime.strptime(dateEdited, '%a, %b %d, %Y, %I:%M %p %z')
-  return dateObj
+    dateEdited = re.sub("<span>|</span>", "", date)
+    if "MDT" in dateEdited:
+        dateEdited = dateEdited.replace("MDT", "-0600")
+    elif "MST" in dateEdited:
+        dateEdited = dateEdited.replace("MST", "-0700")
+    dateObj = datetime.strptime(dateEdited, "%a, %b %d, %Y, %I:%M %p %z")
+    return dateObj
+
 
 def isEventInDB(cursor, connection, date):
-  query = """SELECT COUNT(*) FROM `Event` WHERE `date` = %s"""
-  cursor.execute(query, (date,))
+    query = """SELECT COUNT(*) FROM "Event" WHERE date = %s"""
+    cursor.execute(query, (date,))
 
-  result = cursor.fetchone()
-  count = result[0]
+    result = cursor.fetchone()
+    count = result[0]
 
-  if count > 0:
-      return True
-  else:
-      return False
+    if count > 0:
+        return True
+    else:
+        return False
+
 
 def clearEventsDB(cursor, connection):
-  cursor.execute("DELETE FROM Event")
-  connection.commit()
+    cursor.execute("DELETE FROM Event")
+    connection.commit()
+
 
 def setUpDB():
-  print ("Setting up DB")
-  connection = psycopg2.connect(os.getenv("DATABASE_URL")  )
+    print("Setting up DB")
+    connection = psycopg2.connect(os.getenv("DATABASE_URL"))
 
-  cursor = connection.cursor()
-  return cursor, connection
+    cursor = connection.cursor()
+    return cursor, connection
+
 
 def getEventData():
-  print ("Getting events from MeetUp")
-  url = "https://www.meetup.com/software-developers-of-calgary/events/"
-  response = requests.get(url)
+    print("Getting events from MeetUp")
+    url = "https://www.meetup.com/software-developers-of-calgary/events/"
+    response = requests.get(url)
 
-  soup = BeautifulSoup(response.content, "html.parser")
+    soup = BeautifulSoup(response.content, "html.parser")
 
-  eventListings = soup.find_all("a", href=re.compile("/software-developers-of-calgary/events/(?!calendar|\?type=upcoming)[^/]+"))
-  print (f"Found {len(eventListings)} events")
+    eventListings = soup.find_all(
+        "a",
+        href=re.compile(
+            "/software-developers-of-calgary/events/(?!calendar|\?type=upcoming)[^/]+"
+        ),
+    )
+    print(f"Found {len(eventListings)} events")
 
-  return eventListings
+    return eventListings
+
 
 # todo: make a generic function to handle this and the getEventData
 def getDescAndImgUrl(eventLink):
-  response = requests.get(eventLink)
-  soup = BeautifulSoup(response.content, "html.parser")
-  descriptionHtml = soup.find("div", class_="break-words")
-  
-  imageUrl = getImageUrl(soup)
+    print("Attempt to get image URLs")
+    response = requests.get(eventLink)
+    soup = BeautifulSoup(response.content, "html.parser")
+    descriptionHtml = soup.find("div", class_="break-words")
 
-  # for some reason, the description has a max of 191 characters on the DB
-  # todo: change the description table to allow for more characters
-  description = (descriptionHtml.get_text() if descriptionHtml else "")[:191]
+    imageUrl = getImageUrl(soup)
 
-  return description, imageUrl
+    # for some reason, the description has a max of 191 characters on the DB
+    # todo: change the description table to allow for more characters
+    description = (descriptionHtml.get_text() if descriptionHtml else "")[:191]
+
+    return description, imageUrl
+
 
 def getImageUrl(soup):
-  image = soup.find("img", {"alt": "Photo of Software Developers of Calgary group"})
-  imageUrl = image["src"] if image else ""
+    image = soup.find("img", {"alt": "Photo of Software Developers of Calgary group"})
+    imageUrl = image["src"] if image else ""
 
-  return imageUrl
+    return imageUrl
+
 
 def generateCuid():
-  timestamp = int(time.time() * 1000)
-  randomPart = random.randint(0, 0xffffff)
+    timestamp = int(time.time() * 1000)
+    randomPart = random.randint(0, 0xFFFFFF)
 
-  return f'c{timestamp:x}{randomPart:06x}'
+    return f"c{timestamp:x}{randomPart:06x}"
+
 
 def closeDB(cursor, connection):
-  cursor.close()
-  connection.close()
+    cursor.close()
+    connection.close()
+
+
+def nonAsyncCall(eventListings, cursor, connection):
+    storeEvents(eventListings, cursor, connection)
+
 
 # MAIN:
 cursor, connection = setUpDB()
 eventListings = getEventData()
-storeEvents(eventListings, cursor, connection)
+asyncio.run(storeEvents(eventListings, cursor, connection))
 closeDB(cursor, connection)
