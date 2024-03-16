@@ -1,29 +1,40 @@
+import React from "react";
+import { useRouter } from "next/router";
+import { api } from "@/utils/api";
 import EventDetailHeader from "@/components/EventDetailHeader/EventDetailHeader";
-import { ProjectModel } from "@/components/ProjectCards/Project.model";
-import { UserModel } from "@/components/EventDetailHeader/UserModel";
 import ProjectCards from "@/components/ProjectCards/ProjectCards";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
-import { api } from "@/utils/api";
-import { useRouter } from "next/router";
-import React from "react";
+import { ProjectModel } from "@/components/ProjectCards/Project.model";
+
+type Member = {
+  name: string | null;
+  id: string;
+  isCurrentUserMember?: boolean;
+};
+
+type EventData = {
+  members?: Member[];
+  projects?: any[];
+  id?: string;
+  name?: string;
+  date?: Date;
+  location?: string;
+  description?: string;
+  startTime?: string;
+  updatedAt?: Date;
+};
 
 export default function EventDetailPage() {
-  type Member = {
-    name: string | null;
-    id: string;
-    isCurrentUserMember?: boolean; // Optional property
-  };
   const router = useRouter();
   const event = api.events.findUnique.useQuery(
-    {
-      id: router.query.id as string,
-    },
+    { id: router.query.id as string },
     { enabled: !!router.query.id }
   );
 
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
-  if (event.isLoading)
-    return <StyledCircleLoader isLoading={event.isLoading} />;
+  if (event.isLoading) return <StyledCircleLoader isLoading={event.isLoading} />;
+
+  const isUserAttendEvent = (event.data as EventData)?.members?.some(member => member.isCurrentUserMember) ?? false;
 
   return (
     <div className="p-4">
@@ -34,18 +45,11 @@ export default function EventDetailPage() {
         description={event.data?.description}
         location={event.data?.location}
         startTime={event.data?.startTime}
-        isUserAttendEvent={
-          event.data?.members?.some((member: Member) => member.isCurrentUserMember) ?? false
-        }
-        
+        isUserAttendEvent={isUserAttendEvent}
       />
       <ProjectCards
-        projects={event.data?.projects as unknown as ProjectModel[]}
-        isUserAttendEvent ={
-          (event.data?.members as Member[])?.some(
-            (member) => member.isCurrentUserMember
-          ) ?? false
-        }
+        projects={(event.data as EventData)?.projects as unknown as ProjectModel[]}
+        isUserAttendEvent={isUserAttendEvent}
       />
     </div>
   );
