@@ -1,4 +1,4 @@
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 import random
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 def storeEvents(eventListings, cursor, connection):
   linkPrefix = "https://www.meetup.com"
@@ -76,8 +76,7 @@ def clearEventsDB(cursor, connection):
   connection.commit()
 
 def setUpDB():
-  print (os.getenv("HOST"))
-  connection = psycopg2.connect(os.environ("DATABASE_URL")  )
+  connection = psycopg2.connect(os.getenv("DATABASE_URL")  )
 
   cursor = connection.cursor()
   return cursor, connection
@@ -123,8 +122,6 @@ def closeDB(cursor, connection):
   connection.close()
 
 # MAIN:
-print("Host: ")
-print(os.getenv("HOST"))
 cursor, connection = setUpDB()
 eventListings = getEventData()
 storeEvents(eventListings, cursor, connection)
