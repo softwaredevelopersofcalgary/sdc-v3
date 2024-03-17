@@ -12,9 +12,19 @@ type Member = {
   isCurrentUserMember?: boolean;
 };
 
-type EventData = {
-  members?: Member[];
-  projects?: any[];
+type EventWithProjects = {
+  projects: ProjectModel[];
+  // other properties
+};
+
+function isEventWithProjects(eventData: any): eventData is EventWithProjects {
+  return !!eventData && Array.isArray(eventData.projects);
+}
+
+
+type EventWithMembers = {
+  members: Member[];
+  projects: any[]; // Consider defining a more specific type
   id?: string;
   name?: string;
   date?: Date;
@@ -34,7 +44,8 @@ export default function EventDetailPage() {
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
   if (event.isLoading) return <StyledCircleLoader isLoading={event.isLoading} />;
 
-  const isUserAttendEvent = (event.data as EventData)?.members?.some(member => member.isCurrentUserMember) ?? false;
+  const isUserAttendEvent = event.data != null && 'members' in event.data && Array.isArray(event.data.members) ?
+    event.data.members.some((member: Member) => member.isCurrentUserMember) : false;
 
   return (
     <div className="p-4">
@@ -48,7 +59,9 @@ export default function EventDetailPage() {
         isUserAttendEvent={isUserAttendEvent}
       />
       <ProjectCards
-        projects={(event.data as EventData)?.projects as unknown as ProjectModel[]}
+        projects={
+          isEventWithProjects(event.data) ? event.data.projects : []
+        }
         isUserAttendEvent={isUserAttendEvent}
       />
     </div>
