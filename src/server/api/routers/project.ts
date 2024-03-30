@@ -45,15 +45,58 @@ export const projectRouter = createTRPCRouter({
             create: {
               name: input.name,
               description: input.description,
-              // techs: {connect: 
-              //    input.techs.map((tech)=>({
-              //   id: tech
-              // })),
-            }
-          },}
+              author: {
+                connect: {
+                  id: input.authorId,
+                },
+              },
+          },},
         },
       });
     }),
+  createAndAssociateWithSuperProject: protectedProcedure
+  .input(
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      eventId: z.string(),
+      techs: z.array(z.string()),
+      authorId: z.string(),
+      superProjectId: z.string(),
+    })
+  )
+  .mutation(({ ctx, input }) => {
+    return ctx.prisma.project.create({
+      data: {
+        name: input.name,
+        description: input.description,
+        event: {
+          connect: {
+            id: input.eventId,
+          },
+        },
+        author: {
+          connect: {
+            id: input.authorId,
+          },
+        },
+        techs: {
+          connectOrCreate: input.techs.map((tech) => ({
+            where: {
+              id: tech,
+            },
+            create: {
+              masterTechId: tech,
+            },
+          })),
+        },
+        superProject: {
+          connect: {
+            id: input.superProjectId,
+        },},
+      },
+    });
+  }),
 
   findUnique: publicProcedure
     .input(

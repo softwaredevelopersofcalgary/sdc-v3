@@ -63,7 +63,7 @@ export default function NewProjectCard({
                     className="inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none"
                     onClick={handleSuperButtonClick}
                   >
-                    Select Super Project
+                    Connect to Past Project
                   </button>
                   <button
                     type="button"
