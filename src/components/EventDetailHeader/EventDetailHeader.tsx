@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import useUserSession from "@/hooks/useUserSession";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -8,6 +7,11 @@ import { signIn, signOut } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import StyledCircleLoader from "../StyledCircleLoader/StyledCircleLoader";
+import NewProjectCard from "../NewProjectCard/NewProjectCard";
+import NewProjectBasedSuper from "../NewProjectBasedSuper.tsx/NewProjectBasedSuper";
+import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
+import ImportSuperProjectCard from "../ImportSuperProjectCard.tsx/ImportSuperProjectCard";
+
 interface EventDetailHeader {
   eventId?: string;
   date?: Date;
@@ -27,7 +31,10 @@ export default function EventDetailHeader({
   startTime,
   isUserAttendEvent,
 }: EventDetailHeader) {
+  const [isNew, setIsNew] = useState<boolean>(false);
+  const [isSuper, setIsSuper] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isImport, setIsImport] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const user = useUserSession();
   const utils = api.useContext();
@@ -70,8 +77,20 @@ export default function EventDetailHeader({
     <StyledCircleLoader />
   ) : (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
-      <NewProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
-
+      <NewProjectCard
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setIsNew={setIsNew}
+        setIsSuper={setIsSuper}
+        setIsImport={setIsImport}
+      />
+      <NewProjectModal isOpen={isNew} setIsOpen={setIsNew} />
+      <NewProjectBasedSuper
+        isOpen={isSuper}
+        setIsOpen={setIsSuper}
+        setIsImport={setIsImport}
+      />
+      <ImportSuperProjectCard isOpen={isImport} setIsOpen={setIsImport} />
       <div className="flex flex-row justify-between px-4 py-5 sm:px-6">
         <div>
           <h3 className="text-lg font-medium leading-6 text-gray-700">
@@ -108,8 +127,7 @@ export default function EventDetailHeader({
                     } else {
                       await handleAttendEvent();
                     }
-                  })()
-                  .catch(error => {
+                  })().catch((error) => {
                     console.error("Error handling click event:", error);
                   });
                   return;
@@ -128,8 +146,10 @@ export default function EventDetailHeader({
                 <button
                   type="button"
                   className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  onClick={() => void router.push(`${eventId ?? ''}/user-management`)}
-                  >
+                  onClick={() =>
+                    void router.push(`${eventId ?? ""}/user-management`)
+                  }
+                >
                   Manage Users
                 </button>
               )}
