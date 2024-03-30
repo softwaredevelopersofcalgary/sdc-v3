@@ -131,7 +131,7 @@ model SuperProject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  project Project[]
+  projects Project[]
 
   projectId String
   @@index([authorId])
@@ -139,6 +139,9 @@ model SuperProject {
 
 model Project{
   id      String @id @default(cuid())
+  name    String
+  description   String
+  link  String?
   superProject SuperProject @relation(fields: [superProjectId], references: [id])
   superProjectId String
   event       Event   @relation(fields: eventId, references: id)
@@ -146,6 +149,13 @@ model Project{
   members User[] @relation("ProjectMembers")
   likes    Like[]
   comments Comment[]
+  techs       Tech[]
+
+  author   User?   @relation(fields: [authorId], references: [id])
+  authorId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([eventId])
 }
@@ -154,6 +164,8 @@ model Tech {
   id           String     @id @default(cuid())
   tech         MasterTech @relation(fields: [masterTechId], references: [id])
   superProject      SuperProject?   @relation(fields: [superProjectId], references: [id])
+  project      Project?   @relation(fields: [projectId], references: [id])
+  projectId   String?
   superProjectId    String?
   masterTechId String
   User         User?      @relation(fields: [userId], references: [id])

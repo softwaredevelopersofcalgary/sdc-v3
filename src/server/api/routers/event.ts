@@ -37,9 +37,9 @@ export const eventRouter = createTRPCRouter({
 
         include: {
           projects: {
-            orderBy: {
+            orderBy: [{
               createdAt: "desc",
-            },
+            }],
             include: {
               members: {
                 select: {
