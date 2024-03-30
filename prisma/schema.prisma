@@ -134,7 +134,6 @@ model SuperProject {
   
   projects Project[]
 
-  projectId String
   @@index([authorId])
 }
 

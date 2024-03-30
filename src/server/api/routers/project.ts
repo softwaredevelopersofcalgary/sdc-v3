@@ -41,6 +41,16 @@ export const projectRouter = createTRPCRouter({
               },
             })),
           },
+          superProject: {
+            create: {
+              name: input.name,
+              description: input.description,
+              // techs: {connect: 
+              //    input.techs.map((tech)=>({
+              //   id: tech
+              // })),
+            }
+          },}
         },
       });
     }),
@@ -52,7 +62,7 @@ export const projectRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.project.findUnique({
+      return ctx.prisma.pro.findUnique({
         where: {
           id: input.id,
         },
