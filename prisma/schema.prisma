@@ -63,7 +63,8 @@ model User {
   sessions      Session[]
   events        Event?    @relation(fields: [eventId], references: [id])
   eventId       String?
-  autherOfProjects      SuperProject[]
+  autherOfSuperProjects      SuperProject[]
+  authorOfProject Project[]
   likes         Like[]
   role          Role      @default(USER)
   Comment       Comment[]
