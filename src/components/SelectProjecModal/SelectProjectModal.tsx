@@ -4,12 +4,27 @@ import { type Dispatch, Fragment, type SetStateAction, useRef } from "react";
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsNew: Dispatch<SetStateAction<boolean>>;
+  setIsSuper: Dispatch<SetStateAction<boolean>>;
+  setIsImport: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ImportSuperProjectCard({ isOpen, setIsOpen }: Props) {
+export default function SelectProjectModal({
+  isOpen,
+  setIsOpen,
+  setIsNew,
+  setIsSuper,
+  setIsImport,
+}: Props) {
   const cancelButtonRef = useRef(null);
-  const handleButtonClick = () => {
+
+  const handleNewButtonClick = () => {
     setIsOpen(false);
+    setIsNew(true);
+  };
+  const handleSuperButtonClick = () => {
+    setIsOpen(false);
+    setIsImport(true);
   };
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -42,15 +57,21 @@ export default function ImportSuperProjectCard({ isOpen, setIsOpen }: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                <div className="inline-flex justify-center gap-10 px-4 py-3 sm:px-6">
-                  show super proejct list
+              <Dialog.Panel className="relative inline-flex transform justify-center overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                <div className="inline-flex gap-10 px-4 py-3 sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700"
-                    onClick={handleButtonClick}
+                    className="inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none"
+                    onClick={handleSuperButtonClick}
                   >
-                    Close
+                    Select Super Project
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none"
+                    onClick={handleNewButtonClick}
+                  >
+                    Add New Project
                   </button>
                 </div>
               </Dialog.Panel>

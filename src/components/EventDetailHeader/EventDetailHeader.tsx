@@ -7,10 +7,10 @@ import { signIn, signOut } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import StyledCircleLoader from "../StyledCircleLoader/StyledCircleLoader";
-import NewProjectCard from "../NewProjectCard/NewProjectCard";
-import NewProjectBasedSuper from "../NewProjectBasedSuper.tsx/NewProjectBasedSuper";
+import SelectProjectModal from "../SelectProjecModal/SelectProjectModal";
+import NewProjectBasedSuper from "../NewProjectBasedSuper/NewProjectBasedSuper";
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
-import ImportSuperProjectCard from "../ImportSuperProjectCard.tsx/ImportSuperProjectCard";
+import SelectSuperProjectModal from "../SelectSuperProjectModal/SelectSuperProjectModal";
 
 interface EventDetailHeader {
   eventId?: string;
@@ -35,6 +35,8 @@ export default function EventDetailHeader({
   const [isSuper, setIsSuper] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isImport, setIsImport] = useState<boolean>(false);
+  const [superProjectId, setSuperProjectId] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
   const user = useUserSession();
   const utils = api.useContext();
@@ -77,7 +79,7 @@ export default function EventDetailHeader({
     <StyledCircleLoader />
   ) : (
     <div className="overflow-hidden bg-white py-2 px-4 shadow sm:rounded-lg">
-      <NewProjectCard
+      <SelectProjectModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         setIsNew={setIsNew}
@@ -88,9 +90,15 @@ export default function EventDetailHeader({
       <NewProjectBasedSuper
         isOpen={isSuper}
         setIsOpen={setIsSuper}
-        setIsImport={setIsImport}
+        superProjectId={superProjectId}
       />
-      <ImportSuperProjectCard isOpen={isImport} setIsOpen={setIsImport} />
+      <SelectSuperProjectModal
+        isOpen={isImport}
+        setIsOpen={setIsImport}
+        setIsSuper={setIsSuper}
+        setIsNew={setIsNew}
+        setSuperProjectId={setSuperProjectId}
+      />
       <div className="flex flex-row justify-between px-4 py-5 sm:px-6">
         <div>
           <h3 className="text-lg font-medium leading-6 text-gray-700">

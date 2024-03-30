@@ -16,12 +16,11 @@ import {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
-import TechTagRow from "../TechTagRow/TechTagRow";
 
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  setIsImport: Dispatch<SetStateAction<boolean>>;
+  superProjectId: string;
 }
 
 interface ProjectCreateSubmitProps {
@@ -29,10 +28,17 @@ interface ProjectCreateSubmitProps {
   description: string;
 }
 
+type superProject = {
+  id: string;
+  name: string;
+  techs: string[];
+  description: string;
+};
+
 export default function NewProjectBasedSuper({
   isOpen,
   setIsOpen,
-  setIsImport,
+  superProjectId,
 }: Props) {
   const router = useRouter();
   const utils = api.useContext();
@@ -41,6 +47,13 @@ export default function NewProjectBasedSuper({
   const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>([]);
   const cancelButtonRef = useRef(null);
   const { data, isLoading, isError } = api.techs.getAll.useQuery();
+
+  const tmpSP: superProject = {
+    id: superProjectId,
+    name: "temp name",
+    techs: ["html", "react"],
+    description: "temp description",
+  };
 
   const { handleSubmit, register } = useForm();
   const { mutateAsync: createProject } = api.projects.create.useMutation({
@@ -66,7 +79,6 @@ export default function NewProjectBasedSuper({
   };
 
   const handleImportButtonClick = () => {
-    setIsImport(true);
     setIsOpen(false);
   };
 
@@ -112,23 +124,11 @@ export default function NewProjectBasedSuper({
                       <div className="bg-white px-4 py-5 sm:p-6">
                         <div className="flex flex-col gap-6">
                           <div className="col-span-6 sm:col-span-3 ">
-                            <button
-                              type="button"
-                              className="inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700"
-                              onClick={handleImportButtonClick}
-                            >
-                              Import Super Proejct
-                            </button>
-                          </div>
-                          <div className="col-span-6 sm:col-span-3 ">
-                            TechTagRow techs=projecttechs
-                          </div>
-                          <div className="col-span-6 sm:col-span-3 ">
                             <label
                               htmlFor="title"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Title
+                              Title * check projec ID : {tmpSP.id}
                             </label>
                             <input
                               type="text"
@@ -139,7 +139,40 @@ export default function NewProjectBasedSuper({
                               autoComplete="title"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                               disabled
-                              value="Test Title"
+                              value={tmpSP.name}
+                            />
+                          </div>
+
+                          <div className="col-span-6 sm:col-span-3">
+                            <Autocomplete
+                              multiple
+                              id="tags-outlined"
+                              onChange={(_, value) => {
+                                return setSelectedTechs([...value]);
+                              }}
+                              options={data ?? []}
+                              renderOption={(params, option) => (
+                                <span
+                                  {...params}
+                                  className="flex cursor-pointer flex-row gap-4 p-4 hover:bg-gray-100"
+                                >
+                                  <Image
+                                    height={20}
+                                    width={25}
+                                    src={option.imgUrl}
+                                    alt=""
+                                  />
+                                  <div>{option.label}</div>
+                                </span>
+                              )}
+                              filterSelectedOptions
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Tech for this project"
+                                  placeholder="html"
+                                />
+                              )}
                             />
                           </div>
 
@@ -158,6 +191,7 @@ export default function NewProjectBasedSuper({
                               rows={4}
                               autoComplete="description"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
+                              value={tmpSP.description}
                             />
                           </div>
                         </div>
