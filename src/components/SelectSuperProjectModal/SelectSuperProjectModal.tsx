@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { type Dispatch, Fragment, type SetStateAction, useRef } from "react";
+import { api } from "@/utils/api";
 
 interface Props {
   isOpen: boolean;
@@ -29,6 +30,20 @@ export default function SelectSuperProjectModal({
   setIsNew,
   setSuperProjectId,
 }: Props) {
+  const {superProjectIsError, superProjectData, superProjectIsLoading, superProjectError} = api.superProjects.findByUser.useQuery({
+    userId: 'cltul21xd00007kfw4sag3t5v',
+  })
+
+  // const { mutateAsync: superProjectCreateOrUpdateAsync, isLoading: superProjectIsLoading, isError: superProjectIsError, error: superProjectError } = api.superProjects.createOrUpdate.useMutation({
+  //   onSuccess: async (data: any) => {
+  //     console.log('Mutation successful', data);
+  //   },
+  //   onError: (error: any) => {
+  //     console.error('Mutation failed', error);
+  //   },
+  // });
+  
+    
   const cancelButtonRef = useRef(null);
   const handleNewButtonClick = () => {
     setIsOpen(false);
@@ -39,8 +54,17 @@ export default function SelectSuperProjectModal({
     setIsSuper(true);
     setSuperProjectId(id);
   };
+  // console.log("My super project is: ")
+  // console.log(superProjectIsLoading)
+  // if (typeof (superProjectIsLoading) === 'undefined'){
+  //   console.log("I am about to return loading.")
+  //   return <></>
+  // }
+  // debugger;
+  // const list: SProject[] = superProjectData
   return (
     <Transition.Root show={isOpen} as={Fragment}>
+      {JSON.stringify(superProjectData)}
       <Dialog
         as="div"
         className="relative z-10"

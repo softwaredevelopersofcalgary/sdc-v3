@@ -13,6 +13,7 @@ import EventCard from "./EventCard";
 export default function EventsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const { isError, data, isLoading, error } = api.events.getAll.useQuery();
+
   const user = useUserSession();
   const userIsEditor = IsUserEditor();
 
