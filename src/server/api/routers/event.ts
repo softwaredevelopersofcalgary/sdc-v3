@@ -204,13 +204,6 @@ export const eventRouter = createTRPCRouter({
               id: input.eventId,
             },
           },
-          NOT: {
-            projects: {
-              some: {
-                eventId: input.eventId,
-              },
-            },
-          },
         },
         select: {
           name: true,
@@ -232,11 +225,11 @@ export const eventRouter = createTRPCRouter({
               id: input.eventId, // Filtering users based on event participation
             },
           },
-          NOT: {
-            projects: {
-              some: { eventId: input.eventId }, // Ensuring they are not part of any project
-            },
-          },
+          // NOT: {
+          //   projects: {
+          //     some: { eventId: input.eventId }, // Ensuring they are not part of any project
+          //   },
+          // },
         },
       });
 

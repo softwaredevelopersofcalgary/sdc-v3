@@ -22,15 +22,6 @@ export default function SelectSuperProjectModal({
     userId: "cltul21xd00007kfw4sag3t5v",
   });
 
-  // const { mutateAsync: superProjectCreateOrUpdateAsync, isLoading: superProjectIsLoading, isError: superProjectIsError, error: superProjectError } = api.superProjects.createOrUpdate.useMutation({
-  //   onSuccess: async (data: any) => {
-  //     console.log('Mutation successful', data);
-  //   },
-  //   onError: (error: any) => {
-  //     console.error('Mutation failed', error);
-  //   },
-  // });
-
   const cancelButtonRef = useRef(null);
   const handleNewButtonClick = () => {
     setIsOpen(false);

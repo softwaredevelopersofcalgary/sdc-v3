@@ -5,7 +5,7 @@ import EventDetailHeader from "@/components/EventDetailHeader/EventDetailHeader"
 import ProjectCards from "@/components/ProjectCards/ProjectCards";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import { ProjectModel } from "@/components/ProjectCards/Project.model";
-
+import { Project } from "@/types/ProjectsType";
 type Member = {
   name: string | null;
   id: string;
@@ -24,7 +24,7 @@ function isEventWithProjects(eventData: any): eventData is EventWithProjects {
 
 type EventWithMembers = {
   members: Member[];
-  projects: any[]; // Consider defining a more specific type
+  projects: Project[]; // Consider defining a more specific type
   id?: string;
   name?: string;
   date?: Date;
@@ -40,6 +40,8 @@ export default function EventDetailPage() {
     { id: router.query.id as string },
     { enabled: !!router.query.id }
   );
+
+  console.log(event);
 
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
   if (event.isLoading) return <StyledCircleLoader isLoading={event.isLoading} />;

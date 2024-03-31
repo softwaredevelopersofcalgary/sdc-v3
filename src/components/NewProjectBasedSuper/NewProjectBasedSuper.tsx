@@ -55,7 +55,7 @@ export default function NewProjectBasedSuper({
       },
     });
 
-  const onSubmit = async (data: ProjectCreateSubmitProps) => {
+  const onSubmit = (data: any) => {
     debugger;
     const userId = session?.data?.user?.id;
     const newProjectObj = {
