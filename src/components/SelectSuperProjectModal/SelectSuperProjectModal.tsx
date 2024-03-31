@@ -7,7 +7,7 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   setIsSuper: Dispatch<SetStateAction<boolean>>;
   setIsNew: Dispatch<SetStateAction<boolean>>;
-  setSuperProjectId: Dispatch<SetStateAction<string>>;
+  setSuperProject: Dispatch<SetStateAction<string>>;
 }
 
 type SProject = {
@@ -28,9 +28,9 @@ export default function SelectSuperProjectModal({
   setIsOpen,
   setIsSuper,
   setIsNew,
-  setSuperProjectId,
+  setSuperProject,
 }: Props) {
-  const {superProjectIsError, superProjectData, superProjectIsLoading, superProjectError} = api.superProjects.findByUser.useQuery({
+  const {data} = api.superProjects.findByUser.useQuery({
     userId: 'cltul21xd00007kfw4sag3t5v',
   })
 
@@ -52,25 +52,23 @@ export default function SelectSuperProjectModal({
   const handleSelectProject = (id: string) => {
     setIsOpen(false);
     setIsSuper(true);
-    setSuperProjectId(id);
+    setSuperProject(id);
   };
-  // console.log("My super project is: ")
-  // console.log(superProjectIsLoading)
   // if (typeof (superProjectIsLoading) === 'undefined'){
   //   console.log("I am about to return loading.")
   //   return <></>
   // }
   // debugger;
   // const list: SProject[] = superProjectData
-  return (
+  return (<>
     <Transition.Root show={isOpen} as={Fragment}>
-      {JSON.stringify(superProjectData)}
       <Dialog
         as="div"
         className="relative z-10"
         initialFocus={cancelButtonRef}
         onClose={setIsOpen}
       >
+
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -99,7 +97,7 @@ export default function SelectSuperProjectModal({
                   <div className="overflow-hidden shadow sm:rounded-md">
                     <div className="bg-white px-4 py-5 sm:p-6">
                       <div className="flex flex-col gap-3">
-                        {list.map((project, index) => (
+                        {data.map((project, index) => (
                           <li
                             id={`${project.id}-${index}-${project.name}`}
                             className="col-span-6 list-none sm:col-span-3"
@@ -119,7 +117,7 @@ export default function SelectSuperProjectModal({
                             className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700"
                             onClick={handleNewButtonClick}
                           >
-                            New Project
+                            Link Project
                           </button>
                         </div>
                       </div>
@@ -131,6 +129,6 @@ export default function SelectSuperProjectModal({
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition.Root></>
   );
 }

@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  superProjectId: string;
+  superProject: string;
 }
 
 interface ProjectCreateSubmitProps {
@@ -38,7 +38,7 @@ type superProject = {
 export default function NewProjectBasedSuper({
   isOpen,
   setIsOpen,
-  superProjectId,
+  superProject,
 }: Props) {
   const router = useRouter();
   const utils = api.useContext();
@@ -49,14 +49,14 @@ export default function NewProjectBasedSuper({
   const { data, isLoading, isError } = api.techs.getAll.useQuery();
 
   const tmpSP: superProject = {
-    id: superProjectId,
+    id: superProject,
     name: "temp name",
     techs: ["html", "react"],
     description: "temp description",
   };
 
   const { handleSubmit, register } = useForm();
-  const { mutateAsync: createProject } = api.projects.create.useMutation({
+  const { mutateAsync: createProject } = api.projects.createAndAssociateWithSuperProject.useMutation({
     onSuccess: (data) => {
       setIsOpen(false);
       return utils.events.findUnique.invalidate({
@@ -128,7 +128,7 @@ export default function NewProjectBasedSuper({
                               htmlFor="title"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Title * check projec ID : {tmpSP.id}
+                              Title
                             </label>
                             <input
                               type="text"

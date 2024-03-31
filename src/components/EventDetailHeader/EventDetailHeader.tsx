@@ -35,7 +35,7 @@ export default function EventDetailHeader({
   const [isSuper, setIsSuper] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isImport, setIsImport] = useState<boolean>(false);
-  const [superProjectId, setSuperProjectId] = useState<string>("");
+  const [superProject, setSuperProject] = useState({});
 
   const [loading, setLoading] = useState<boolean>(false);
   const user = useUserSession();
@@ -90,14 +90,14 @@ export default function EventDetailHeader({
       <NewProjectBasedSuper
         isOpen={isSuper}
         setIsOpen={setIsSuper}
-        superProjectId={superProjectId}
+        superProject={superProject}
       />
       <SelectSuperProjectModal
         isOpen={isImport}
         setIsOpen={setIsImport}
         setIsSuper={setIsSuper}
         setIsNew={setIsNew}
-        setSuperProjectId={setSuperProjectId}
+        setsuperProject={setsuperProject}
       />
       <div className="flex flex-row justify-between px-4 py-5 sm:px-6">
         <div>

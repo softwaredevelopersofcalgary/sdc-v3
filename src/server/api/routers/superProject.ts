@@ -16,7 +16,9 @@ import {
       .query(async ({ ctx, input }) => {
         return ctx.prisma.superProject.findMany({
           where: {
-            projects:{
+            OR: [  
+            {
+              projects:{
                 some:{
                     members:{
                         some:{
@@ -24,7 +26,10 @@ import {
                         }
                     }
                 }
-            },
+            }},{
+              authorId: input.userId,
+
+            }]
           },
         });
       }),
