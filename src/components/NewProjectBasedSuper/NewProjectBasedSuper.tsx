@@ -28,13 +28,6 @@ interface ProjectCreateSubmitProps {
   description: string;
 }
 
-type superProject = {
-  id: string;
-  name: string;
-  techs: string[];
-  description: string;
-};
-
 export default function NewProjectBasedSuper({
   isOpen,
   setIsOpen,
@@ -139,7 +132,7 @@ export default function NewProjectBasedSuper({
                               autoComplete="title"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                               disabled
-                              value={tmpSP.name}
+                              value={superProject.name}
                             />
                           </div>
 
@@ -191,7 +184,7 @@ export default function NewProjectBasedSuper({
                               rows={4}
                               autoComplete="description"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
-                              value={tmpSP.description}
+                              value={superProject.description}
                             />
                           </div>
                         </div>

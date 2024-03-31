@@ -30,7 +30,7 @@ export default function SelectSuperProjectModal({
   setIsNew,
   setSuperProject,
 }: Props) {
-  const {data} = api.superProjects.findByUser.useQuery({
+  const { data, isLoading} = api.superProjects.findByUser.useQuery({
     userId: 'cltul21xd00007kfw4sag3t5v',
   })
 
@@ -49,10 +49,10 @@ export default function SelectSuperProjectModal({
     setIsOpen(false);
     setIsNew(true);
   };
-  const handleSelectProject = (id: string) => {
+  const handleSelectProject = (project: any) => {
     setIsOpen(false);
     setIsSuper(true);
-    setSuperProject(id);
+    setSuperProject(project);
   };
   // if (typeof (superProjectIsLoading) === 'undefined'){
   //   console.log("I am about to return loading.")
@@ -97,12 +97,13 @@ export default function SelectSuperProjectModal({
                   <div className="overflow-hidden shadow sm:rounded-md">
                     <div className="bg-white px-4 py-5 sm:p-6">
                       <div className="flex flex-col gap-3">
-                        {data.map((project, index) => (
+                        
+                        {isLoading ? '': data.map((project, index) => (
                           <li
                             id={`${project.id}-${index}-${project.name}`}
                             className="col-span-6 list-none sm:col-span-3"
                             onClick={() => {
-                              handleSelectProject(project.id);
+                              handleSelectProject(project);
                             }}
                           >
                             <div className="w-full rounded-md border border-transparent bg-gray-100 p-3 text-left hover:bg-gray-400">

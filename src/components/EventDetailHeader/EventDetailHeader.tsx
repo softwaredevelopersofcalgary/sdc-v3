@@ -97,7 +97,7 @@ export default function EventDetailHeader({
         setIsOpen={setIsImport}
         setIsSuper={setIsSuper}
         setIsNew={setIsNew}
-        setsuperProject={setsuperProject}
+        setSuperProject={setSuperProject}
       />
       <div className="flex flex-row justify-between px-4 py-5 sm:px-6">
         <div>
