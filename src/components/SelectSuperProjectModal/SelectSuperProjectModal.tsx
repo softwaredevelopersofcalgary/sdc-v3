@@ -36,10 +36,19 @@ export default function SelectSuperProjectModal({
     setIsOpen(false);
     setIsNew(true);
   };
-  const handleSelectProject = (id: string) => {
+  const handleSelectProject = (
+    id: string,
+    name: string,
+    description: string
+  ) => {
+    const tmpProject: superProject = {
+      id: id,
+      name: name,
+      description: description,
+    };
     setIsOpen(false);
     setIsSuper(true);
-    setSuperProject(id);
+    setSuperProject(tmpProject);
   };
   // if (typeof (superProjectIsLoading) === 'undefined'){
   //   console.log("I am about to return loading.")
@@ -84,12 +93,16 @@ export default function SelectSuperProjectModal({
                     <div className="overflow-hidden shadow sm:rounded-md">
                       <div className="bg-white px-4 py-5 sm:p-6">
                         <div className="flex flex-col gap-3">
-                          {data.map((project, index) => (
+                          {data?.map((project, index) => (
                             <li
                               id={`${project.id}-${index}-${project.name}`}
                               className="col-span-6 list-none sm:col-span-3"
                               onClick={() => {
-                                handleSelectProject(project.id);
+                                handleSelectProject(
+                                  project.id,
+                                  project.name,
+                                  project.description
+                                );
                               }}
                             >
                               <div className="w-full rounded-md border border-transparent bg-gray-100 p-3 text-left hover:bg-gray-400">
