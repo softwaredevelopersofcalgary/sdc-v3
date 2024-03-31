@@ -11,6 +11,7 @@ import SelectProjectModal from "../SelectProjecModal/SelectProjectModal";
 import NewProjectBasedSuper from "../NewProjectBasedSuper/NewProjectBasedSuper";
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import SelectSuperProjectModal from "../SelectSuperProjectModal/SelectSuperProjectModal";
+import { MasterTech } from "@prisma/client";
 
 interface EventDetailHeader {
   eventId?: string;
@@ -35,7 +36,7 @@ export default function EventDetailHeader({
   const [isSuper, setIsSuper] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isImport, setIsImport] = useState<boolean>(false);
-  const [superProject, setSuperProject] = useState({});
+  const [superProject, setSuperProject] = useState<superProject>({});
 
   const [loading, setLoading] = useState<boolean>(false);
   const user = useUserSession();
