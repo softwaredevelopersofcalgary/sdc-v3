@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { superProject } from "@/types/superProejct";
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { Autocomplete, TextField } from "@mui/material";
@@ -20,7 +21,7 @@ import { useForm } from "react-hook-form";
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  superProject: string;
+  superProject: superProject;
 }
 
 interface ProjectCreateSubmitProps {
@@ -41,22 +42,18 @@ export default function NewProjectBasedSuper({
   const cancelButtonRef = useRef(null);
   const { data, isLoading, isError } = api.techs.getAll.useQuery();
 
-  const tmpSP: superProject = {
-    id: superProject,
-    name: "temp name",
-    techs: ["html", "react"],
-    description: "temp description",
-  };
+  console.log(superProject);
 
   const { handleSubmit, register } = useForm();
-  const { mutateAsync: createProject } = api.projects.createAndAssociateWithSuperProject.useMutation({
-    onSuccess: (data) => {
-      setIsOpen(false);
-      return utils.events.findUnique.invalidate({
-        id: data?.eventId,
-      });
-    },
-  });
+  const { mutateAsync: createProject } =
+    api.projects.createAndAssociateWithSuperProject.useMutation({
+      onSuccess: (data) => {
+        setIsOpen(false);
+        return utils.events.findUnique.invalidate({
+          id: data?.eventId,
+        });
+      },
+    });
 
   const onSubmit = async (data: ProjectCreateSubmitProps) => {
     debugger;
@@ -69,7 +66,7 @@ export default function NewProjectBasedSuper({
       eventId: eventUuid?.toString() || "",
       superProjectId: superProject.id
     };
-    await createProject(newProjectObj);
+    //await createProject(newProjectObj);
     return;
   };
 
