@@ -59,13 +59,15 @@ export default function NewProjectBasedSuper({
   });
 
   const onSubmit = async (data: ProjectCreateSubmitProps) => {
+    debugger;
     const userId = session?.data?.user?.id;
     const newProjectObj = {
-      name: data.title,
-      description: data.description,
+      name: data.target.title.value,
+      description: data.target.description.value,
       techs: selectedTechs.map((tech: MasterTech) => tech.id),
       authorId: userId || "",
       eventId: eventUuid?.toString() || "",
+      superProjectId: superProject.id
     };
     await createProject(newProjectObj);
     return;
@@ -112,7 +114,7 @@ export default function NewProjectBasedSuper({
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div className="mt-5 md:col-span-2 md:mt-0">
                   {/* @ts-ignore */}
-                  <form onSubmit={handleSubmit(onSubmit)}>
+                  <form onSubmit={onSubmit}>
                     <div className="overflow-hidden shadow sm:rounded-md">
                       <div className="bg-white px-4 py-5 sm:p-6">
                         <div className="flex flex-col gap-6">
