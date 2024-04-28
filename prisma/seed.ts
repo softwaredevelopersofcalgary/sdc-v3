@@ -22,21 +22,19 @@ async function main() {
     }
   }
 
-  // await prisma.role.
-
-  // await prisma.role.createMany({
-  //   data: [
-  //     {
-  //       id: 'ADMIN',
-  //     },
-  //     {
-  //       id: 'MOD',
-  //     },
-  //     {
-  //       id: 'USER',
-  //     },
-  //   ],
-  // });
+  await prisma.role.createMany({
+    data: [
+      {
+        id: 'ADMIN',
+      },
+      {
+        id: 'MOD',
+      },
+      {
+        id: 'USER',
+      },
+    ],
+  });
 
 }
 
