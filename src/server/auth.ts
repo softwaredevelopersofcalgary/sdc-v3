@@ -45,18 +45,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  adapter: {
-    ...PrismaAdapter(prisma),
-    createUser: async (data: any) => {
-      return prisma.user.create({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: {
-          ...data,
-          roleId: 'USER',
-        }
-      });
-    },
-  },
+  adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
     // DiscordProvider({

@@ -51,7 +51,7 @@ CREATE TABLE "User" (
     "linkedin" TEXT,
     "website" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "roleId" TEXT NOT NULL,
+    "roleId" TEXT NOT NULL DEFAULT 'USER',
     CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "User_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );

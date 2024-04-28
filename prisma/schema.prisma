@@ -74,7 +74,7 @@ model User {
   techs                 Tech[]
   memberOfProjects      Project[]      @relation("ProjectMembers")
   memberOfEvents        Event[]        @relation("EventMembers")
-  roleId                String
+  roleId                String         @default("USER")
 
   @@index([eventId])
 }
