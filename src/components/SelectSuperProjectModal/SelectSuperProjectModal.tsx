@@ -86,6 +86,7 @@ export default function SelectSuperProjectModal({
                         <div className="flex flex-col gap-3">
                           {data?.map((project, index) => (
                             <li
+                            key={index}
                               id={`${project.id}-${index}-${project.name}`}
                               className="col-span-6 list-none sm:col-span-3"
                               onClick={() => {

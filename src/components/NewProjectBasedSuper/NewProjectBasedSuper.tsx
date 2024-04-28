@@ -55,12 +55,16 @@ export default function NewProjectBasedSuper({
       },
     });
 
-  const onSubmit = (data: any) => {
+  interface FormData{
+    title: string;
+    description: string;
+  }
+  const onSubmit = (data: FormData) => {
     debugger;
     const userId = session?.data?.user?.id;
     const newProjectObj = {
-      name: data.target.title.value,
-      description: data.target.description.value,
+      name: data.title,
+      description: data.description,
       techs: selectedTechs.map((tech: MasterTech) => tech.id),
       authorId: userId || "",
       eventId: eventUuid?.toString() || "",

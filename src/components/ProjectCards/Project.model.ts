@@ -2,12 +2,12 @@ export interface ProjectModel {
   id: string;
   name: string;
   description: string;
-  link?: string;
+  link?: string | null;
   image?: string;
   eventId: string;
   authorId: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   techs: Tech2[];
   author: Author;
   comments: Comment[];

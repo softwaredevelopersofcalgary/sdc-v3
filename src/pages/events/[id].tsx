@@ -6,6 +6,7 @@ import ProjectCards from "@/components/ProjectCards/ProjectCards";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import { ProjectModel } from "@/components/ProjectCards/Project.model";
 import { Project } from "@/types/ProjectsType";
+import { Event } from "@/types/EventsType";
 type Member = {
   name: string | null;
   id: string;
@@ -14,17 +15,29 @@ type Member = {
 
 type EventWithProjects = {
   projects: ProjectModel[];
-  // other properties
+  id: string;
+  name: string;
+  date: Date;
+  location: string;
+  description: string;
+  startTime: string;
+  image: string | null;
+  isFeatured: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  members: Member[];
 };
 
-function isEventWithProjects(eventData: any): eventData is EventWithProjects {
-  return !!eventData && Array.isArray(eventData.projects);
+function isEventWithProjects(eventData: any): eventData is EventWithProjects { // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  if (!eventData) return false; // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  return !!eventData && Array.isArray(eventData.projects); // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
 }
 
 
 type EventWithMembers = {
   members: Member[];
-  projects: Project[]; // Consider defining a more specific type
+  projects: ProjectModel[]; // Consider defining a more specific type
   id?: string;
   name?: string;
   date?: Date;
@@ -41,7 +54,7 @@ export default function EventDetailPage() {
     { enabled: !!router.query.id }
   );
 
-  console.log(event);
+  console.log(event.data);
 
   if (event.isError) return <div>{JSON.stringify(event.error)}</div>;
   if (event.isLoading) return <StyledCircleLoader isLoading={event.isLoading} />;
@@ -62,7 +75,7 @@ export default function EventDetailPage() {
       />
       <ProjectCards
         projects={
-          isEventWithProjects(event.data) ? event.data.projects : []
+          isEventWithProjects(event.data!) ? event.data.projects : []
         }
         isUserAttendEvent={isUserAttendEvent}
       />
