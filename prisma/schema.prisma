@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider     = "cockroachdb"
+  provider     = "sqlite"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -13,6 +13,12 @@ model Example {
   text      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// stores allowed values for user roles
+model Role {
+  id    String @id
+  users User[]
 }
 
 model Account {
@@ -51,7 +57,7 @@ model User {
   emailVerified         DateTime?
   image                 String?
   eventId               String?
-  role                  Role           @default(USER)
+  role                  Role           @relation(fields: [roleId], references: [id])
   title                 String?
   twitter               String?
   github                String?
@@ -68,6 +74,7 @@ model User {
   techs                 Tech[]
   memberOfProjects      Project[]      @relation("ProjectMembers")
   memberOfEvents        Event[]        @relation("EventMembers")
+  roleId                String
 
   @@index([eventId])
 }
@@ -85,7 +92,7 @@ model Event {
   name        String
   date        DateTime
   location    String
-  description String    @db.String(1000)
+  description String
   startTime   String
   image       String?
   isFeatured  Boolean   @default(false)
@@ -198,10 +205,4 @@ model ProjectMembers {
   @@unique([A, B], map: "_ProjectMembers_AB_unique")
   @@index([B], map: "_ProjectMembers_B_index")
   @@map("_ProjectMembers")
-}
-
-enum Role {
-  ADMIN
-  MOD
-  USER
 }
