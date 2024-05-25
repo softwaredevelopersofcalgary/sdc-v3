@@ -5,7 +5,7 @@ import { Popover } from "antd";
 import { Tech2 } from "@/components/ProjectCards/Project.model";
 import UserCardSimple from "@/components/User/UserCardSimple";
 import { useState } from "react";
-import TextArea from "antd/es/input/TextArea";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface CommentBubbleProps {
   image: string;
@@ -64,12 +64,21 @@ export default function CommentBubble({
   }
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    var text_area = event.target.value;
+    const text_area = event.target.value;
     setCommentText(text_area);
   }
 
-  const [isEditing, setIsEditing] = useState(false);
+  const handleHoverOn = () => {
+    setHovering(true);
+  }
+
+  const handleHoverOff = () => {
+    setHovering(false);
+  }
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [comment_text, setCommentText] = useState<string>(comment);
+  const [hovering, setHovering] = useState<boolean>(false);
 
   return (
     <div className="flex w-full flex-row items-start gap-4 pt-6">
@@ -91,28 +100,25 @@ export default function CommentBubble({
           />
         </div>
       </Popover>
-      <div className="w-full rounded-lg bg-gray-50 p-3">
+      <div className="w-full rounded-lg bg-gray-50 p-3" onMouseEnter={handleHoverOn} onMouseLeave={handleHoverOff}>
         <div className="flex flex-row items-center justify-between gap-3">
           <div className="text-lg font-semibold">{username}</div>
           <div className="font-base text-sm">
             {format(new Date(createdAt), "HH:mm MMMM dd, yyyy")}
           </div>
           {
-            userIsPoster ? 
-              <Popover
-              content=
-              {
-              <div>
-                <button onClick={handleEditClick}>Edit</button>
-                <br></br>
-                <button onClick={handleDeleteClick}>Delete</button>
-                </div>
-            }
-              >
-                ...
-              </Popover>
-              : 
-              ""
+            (userIsPoster && hovering) &&
+            <div style={{display: 'inline-flex'}}>
+              <PencilSquareIcon 
+                className="block h-6 w-6 cursor-pointer text-gray-700" 
+                onClick={handleEditClick}
+              />  
+              &nbsp; &nbsp; &nbsp; 
+              <TrashIcon
+                className="block h-6 w-6 cursor-pointer text-gray-700"
+                onClick={handleDeleteClick}
+              />
+            </div>
           }
         </div>
         <div className="pt-2 text-base font-light">
@@ -137,6 +143,7 @@ export default function CommentBubble({
                 }
                 `}
               >Cancel</button>
+              &nbsp; 
                 <button 
                 disabled={isLoading}
                 className={`
