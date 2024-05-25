@@ -16,6 +16,7 @@ import {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
+import ProjectTagRow from "../ProjectTagRow/ProjectTagRow";
 
 interface Props {
   isOpen: boolean;
@@ -116,6 +117,9 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
                               autoComplete="title"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                             />
+                          </div>
+                          <div className="col-span-6 sm:col-span-3">
+                            <ProjectTagRow tags={[]} editable={true} />
                           </div>
 
                           <div className="col-span-6 sm:col-span-3">

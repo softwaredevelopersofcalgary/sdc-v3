@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import TechTagRow from "../../TechTagRow/TechTagRow";
+import ProjectTagRow from "../../ProjectTagRow/ProjectTagRow";
 import { ProjectModel } from "../Project.model";
 import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
 import { boolean } from "zod";
@@ -158,7 +159,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
-
   const handleUpvote = async () => {
     await mutateAsync({
       projectId: project.id,
@@ -180,6 +180,9 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
             </div>
             <div className="py-2">
               <TechTagRow techs={project.techs} />
+            </div>
+            <div className="py-2">
+              <ProjectTagRow tags={project.tags??[]} editable={false} />
             </div>
             {user && (
               <div className="py-2">
