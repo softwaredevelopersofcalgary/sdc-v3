@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import CommentBubble from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
+import CommentBubble, {CommentBubbleValues,} from "@/components/Comments/CommentTextArea/CommentBubble/CommentBubble";
 import CommentTextArea, {
   CommentTextAreaValues,
 } from "@/components/Comments/CommentTextArea/CommentTextArea";
@@ -36,12 +36,45 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
         });
       },
     });
+  const { mutateAsync: deleteComment } =
+  api.projects.deleteComment.useMutation({
+    onSuccess: async () => {
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
+    },
+  });
+  const { mutateAsync: editComment } =
+  api.projects.updateComment.useMutation({
+    onSuccess: async () => {
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
+    },
+  });
 
   const onCommentSubmit = async (data: CommentTextAreaValues) => {
     await createComment({
       comment: data.comment,
       projectId: project.id,
       authorId: user?.id || "",
+    });
+
+    reset();
+  };
+
+  const onCommentDelete = async (id: string) => {
+    await deleteComment({
+      id: id,
+    });
+
+    reset();
+  };
+
+  const onCommentEdit = async (id: string, comment: string) => {
+    await editComment({
+      id: id,
+      comment: comment,
     });
 
     reset();
@@ -132,6 +165,7 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
       userId: user?.id || "",
     });
   };
+
 
   return (
     <div
@@ -231,11 +265,16 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
         )}
         {project.comments?.map((comment) => (
           <CommentBubble
+            isLoading={isLoading}
+            onDelete={onCommentDelete}
+            onEdit={onCommentEdit}
             key={comment.id}
             image={comment.user?.image}
             username={comment.user.name}
+            userIsPoster={comment.user.id == user?.id || false}
             createdAt={comment.createdAt}
             comment={comment.comment}
+            commentId={comment.id}
             userTitle={comment.user.title}
             userTechs={comment.user.techs}
           />
