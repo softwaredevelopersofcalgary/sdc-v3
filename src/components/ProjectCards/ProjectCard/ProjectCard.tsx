@@ -126,20 +126,12 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
-
   const handleUpvote = async () => {
     await mutateAsync({
       projectId: project.id,
       userId: user?.id || "",
     });
   };
-
-  // const ProjectTagsUI = [
-  //   Tag("", "")
-  // ]
-  // //   Tag()
-  // //   "Looking for help" and "Beginner-friendly project"
-  // // }
 
   return (
     <div
