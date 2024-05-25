@@ -12,6 +12,7 @@ import NewProjectBasedSuper from "../NewProjectBasedSuper/NewProjectBasedSuper";
 import NewProjectModal from "@/components/NewProjectModal/NewProjectModal";
 import SelectSuperProjectModal from "../SelectSuperProjectModal/SelectSuperProjectModal";
 import { MasterTech } from "@prisma/client";
+import QRCodeButton from "./QRCodeButton";
 
 interface EventDetailHeader {
   eventId?: string;
@@ -111,6 +112,7 @@ export default function EventDetailHeader({
         <div>
           {!user && (
             <div className="flex space-x-4">
+              <QRCodeButton link={window.location.href} />
               <button
                 type="button"
                 className="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
@@ -124,6 +126,7 @@ export default function EventDetailHeader({
         <div>
           {user && (
             <div className="flex space-x-4">
+              <QRCodeButton link={window.location.href} />
               <button
                 type="button"
                 className={`inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
