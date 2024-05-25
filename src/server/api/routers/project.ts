@@ -161,6 +161,38 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+    updateComment: protectedProcedure
+    .input(
+      z.object({
+        comment: z.string(),
+        id: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.comment.update({
+        where: {
+          id: input.id
+        },
+        data: {
+          comment: input.comment,
+        },
+      });
+    }),
+
+    deleteComment: protectedProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.comment.delete({
+        where: {
+          id: input.id
+        },
+      });
+    }),
+
   joinProject: protectedProcedure
     .input(
       z.object({

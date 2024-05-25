@@ -2,7 +2,7 @@ export interface Project {
     id: string;
     name: string;
     description: string;
-    link?: string;
+    link?: string | null;
     image?: string;
     eventId: string;
     authorId: string;
