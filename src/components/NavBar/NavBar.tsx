@@ -22,7 +22,6 @@ export default function NavBar() {
   const handleButtonClick = () => {
     return user ? signOut() : signIn();
   };
-
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
