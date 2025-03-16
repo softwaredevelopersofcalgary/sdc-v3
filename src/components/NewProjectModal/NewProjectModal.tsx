@@ -20,6 +20,13 @@ import { useForm } from "react-hook-form";
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  initialData?: {
+    title: string;
+    description: string;
+    techs: any[];
+  };
+  onSubmit?: (name: string, description: string, techs: string[]) => Promise<void>;
+  mode?: 'create' | 'edit';
 }
 
 interface ProjectCreateSubmitProps {
@@ -27,16 +34,43 @@ interface ProjectCreateSubmitProps {
   description: string;
 }
 
-export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
+interface EditProjectModalProps {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  project: ProjectModel;
+  onEdit: (name: string, description: string, techs: string[]) => Promise<void>;
+}
+
+export default function NewProjectModal({ 
+    isOpen,
+    setIsOpen,
+    initialData,
+    onSubmit: customSubmit,
+    mode = 'create' 
+  }: Props) {
   const router = useRouter();
   const utils = api.useContext();
   const { id: eventUuid } = router.query;
   const session = useSession();
-  const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>([]);
   const cancelButtonRef = useRef(null);
   const { data, isLoading, isError } = api.techs.getAll.useQuery();
 
-  const { handleSubmit, register } = useForm();
+  const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>(
+    initialData?.techs?.map(tech => ({
+      id: tech.masterTechId,
+      label: tech.tech.label,
+      slug: tech.tech.label.toLowerCase(),
+      imgUrl: tech.tech.imgUrl
+    })) || []
+  );
+
+  const { handleSubmit, register } = useForm({
+    defaultValues: {
+      title: initialData?.title || '',
+      description: initialData?.description || ''
+    }
+  });
+
   const { mutateAsync: createProject } = api.projects.create.useMutation({
     onSuccess: (data) => {
       setIsOpen(false);
@@ -47,17 +81,22 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
   });
 
   const onSubmit = async (data: ProjectCreateSubmitProps) => {
-    const userId = session?.data?.user?.id;
-    const newProjectObj = {
-      name: data.title,
-      description: data.description,
-      techs: selectedTechs.map((tech: MasterTech) => tech.id),
-      authorId: userId || "",
-      eventId: eventUuid?.toString() || "",
-    };
-    await createProject(newProjectObj);
-    return;
+    if (customSubmit) {
+      await customSubmit(data.title, data.description, selectedTechs.map(tech => tech.id));
+    } else {
+      const userId = session?.data?.user?.id;
+      const newProjectObj = {
+        name: data.title,
+        description: data.description,
+        techs: selectedTechs.map(tech => tech.id),
+        authorId: userId || "",
+        eventId: eventUuid?.toString() || "",
+      };
+      await createProject(newProjectObj);
+    }
   };
+
+  
 
   if (isLoading) return null;
   if (isError) return <div>Error!!</div>;
@@ -122,10 +161,13 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
                             <Autocomplete
                               multiple
                               id="tags-outlined"
+                              value={selectedTechs}
                               onChange={(_, value) => {
                                 return setSelectedTechs([...value]);
                               }}
                               options={data ?? []}
+                              getOptionLabel={(option) => option.label}
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
                               renderOption={(params, option) => (
                                 <span
                                   {...params}
@@ -187,5 +229,21 @@ export default function NewProjectModal({ isOpen, setIsOpen }: Props) {
         </div>
       </Dialog>
     </Transition.Root>
+  );
+}
+
+export function EditProjectModal({ isOpen, setIsOpen, project, onEdit }: EditProjectModalProps) {
+  return (
+    <NewProjectModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      initialData={{
+        title: project.name,
+        description: project.description,
+        techs: project.techs
+      }}
+      onSubmit={onEdit}
+      mode="edit"
+    />
   );
 }

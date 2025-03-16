@@ -221,6 +221,62 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  editProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        name: z.string(),
+        description: z.string(),
+        techs: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingProject = await ctx.prisma.project.findUnique({
+        where: { id: input.projectId },
+        include: { techs: true }
+      });
+
+      const existingTechIds = existingProject?.techs.map(t => t.id) || [];
+      const newTechIds = input.techs;
+
+      const techsToAdd = newTechIds.filter(id => !existingTechIds.includes(id));
+      const techsToRemove = existingTechIds.filter(id => !newTechIds.includes(id));
+
+      if (techsToRemove.length > 0) {
+        await ctx.prisma.tech.deleteMany({
+          where: {
+            id: {
+              in: techsToRemove
+            }
+          }
+        });
+      }
+
+      return ctx.prisma.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          name: input.name,
+          description: input.description,
+          techs: {
+            disconnect: techsToRemove.map(id => ({ id})),
+            connectOrCreate: techsToAdd.map(tech => ({
+              where: { id: tech},
+              create: {masterTechId: tech }
+            }))
+          }
+        },
+        include: {
+          techs: {
+            include: {
+              tech: true
+            }
+          }
+        }
+      });
+    }),
+
   joinProject: protectedProcedure
     .input(
       z.object({

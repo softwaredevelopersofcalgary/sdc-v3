@@ -13,10 +13,12 @@ import { HandThumbUpIcon as HandThumbUpIconSolid } from "@heroicons/react/24/sol
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
 import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
 import { boolean } from "zod";
+import { EditProjectModal } from "@/components/NewProjectModal/NewProjectModal";
 
 interface ProjectCardProps {
   project: ProjectModel;
@@ -128,6 +130,20 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
       },
     });
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { mutateAsync: editProject, isLoading: editProjectIsLoading } =
+    api.projects.editProject.useMutation({
+      onSuccess: async () => {
+        await Promise.all([
+          utils.events.findUnique.invalidate({
+          id: project.eventId,
+        }),
+        utils.projects.getAll.invalidate(),
+      ]);
+      },
+    });
+
   const { mutateAsync: deleteAllProjectComments } = 
     api.projects.deleteAllProjectComments.useMutation({
     onSuccess: async () => {
@@ -193,6 +209,15 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     }
   };
 
+  const handleEditProject = async (name: string, description: string, techs: string[]) => {
+    await editProject({
+      projectId: project.id,
+      name,
+      description,
+      techs,
+    });
+    setIsEditModalOpen(false);
+  }
 
   const handleUpvote = async () => {
     await mutateAsync({
@@ -203,6 +228,13 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
 
 
   return (
+    <>
+      <EditProjectModal
+        isOpen={isEditModalOpen}
+        setIsOpen={setIsEditModalOpen}
+        project={project}
+        onEdit={handleEditProject}
+    />
     <div
       key={project.id}
       className="flex w-full flex-col overflow-hidden rounded-lg shadow-lg"
@@ -240,6 +272,17 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
               {(user.id === project.author.id || user.role === "MOD" || user.role === "ADMIN") && (
                 <div className="flex space-x-4">
                 {/* TODO: Add an edit button and handle all cases. */}
+                <PillButton
+                  label={
+                    editProjectIsLoading
+                    ? "Loading..."
+                    : "Edit"
+                  }
+                  isMember={project?.isMember}
+                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                  isLoading={editProjectIsLoading}
+                  handleClick={() => setIsEditModalOpen(true)}
+                />
                 <PillButton 
                   label={
                     deleteProjectIsLoading
@@ -332,5 +375,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
         ))}
       </div>
     </div>
+    </>
   );
 }
