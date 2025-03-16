@@ -23,7 +23,7 @@ interface Props {
   initialData?: {
     title: string;
     description: string;
-    techs: any[];
+    techs: Tech[];
   };
   onSubmit?: (name: string, description: string, techs: string[]) => Promise<void>;
   onCancel?: () => void;
@@ -43,6 +43,23 @@ interface EditProjectModalProps {
   onCancel?: () => void;
 }
 
+interface Tech {
+  id: string;
+  masterTechId: string;
+  tech: {
+    id: string;
+    label: string;
+    imgUrl: string;
+  };
+}
+
+interface ProjectModel {
+  id: string;
+  name: string;
+  description: string;
+  techs: Tech[];
+}
+
 export default function NewProjectModal({ 
     isOpen,
     setIsOpen,
@@ -58,7 +75,7 @@ export default function NewProjectModal({
   const { data, isLoading, isError } = api.techs.getAll.useQuery();
 
   const [selectedTechs, setSelectedTechs] = useState<MasterTech[]>(
-    initialData?.techs?.map(tech => ({
+    initialData?.techs?.map((tech: Tech) => ({
       id: tech.masterTechId,
       label: tech.tech.label,
       slug: tech.tech.label.toLowerCase(),
@@ -223,7 +240,7 @@ export default function NewProjectModal({
                               setIsOpen(false);
                               if (customSubmit && mode === 'edit') {
                                 setSelectedTechs(
-                                  (initialData?.techs?.map(tech => ({
+                                  (initialData?.techs?.map((tech: Tech) => ({
                                     id: tech.masterTechId,
                                     label: tech.tech.label,
                                     slug: tech.tech.label.toLowerCase(),
@@ -255,7 +272,7 @@ export default function NewProjectModal({
   );
 }
 
-export function EditProjectModal({ isOpen, setIsOpen, project, onEdit }: EditProjectModalProps) {
+export function EditProjectModal({ isOpen, setIsOpen, project, onEdit, onCancel }: EditProjectModalProps) {
   const [originalData] = useState({
     title: project.name,
     description: project.description,
@@ -264,10 +281,9 @@ export function EditProjectModal({ isOpen, setIsOpen, project, onEdit }: EditPro
 
   const handleCancel = () => {
     setIsOpen(false);
-    onEdit(
-      originalData.title, 
-      originalData.description, 
-      originalData.techs.map(t => t.masterTechId));
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   return (

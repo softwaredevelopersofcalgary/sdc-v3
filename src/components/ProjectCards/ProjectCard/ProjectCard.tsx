@@ -139,7 +139,9 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
           utils.events.findUnique.invalidate({
           id: project.eventId,
         }),
-        utils.projects.getAll.invalidate(),
+        utils.projects.findUnique.invalidate({
+          id: project.eventId,
+        }),
       ]);
       },
     });
@@ -282,7 +284,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
               />
               {(user.id === project.author.id || user.role === "MOD" || user.role === "ADMIN") && (
                 <div className="flex space-x-4">
-                {/* TODO: Add an edit button and handle all cases. */}
                 <PillButton
                   label={
                     editProjectIsLoading
@@ -290,7 +291,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
                     : "Edit"
                   }
                   isMember={project?.isMember}
-                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
                   isLoading={editProjectIsLoading}
                   handleClick={() => setIsEditModalOpen(true)}
                 />
@@ -301,7 +301,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
                     : "Delete" 
                   }
                   isMember={project?.isMember}
-                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
                   isLoading={deleteProjectIsLoading}
                   handleClick={handleDeleteProject}
                 />
