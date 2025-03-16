@@ -26,6 +26,7 @@ interface Props {
     techs: any[];
   };
   onSubmit?: (name: string, description: string, techs: string[]) => Promise<void>;
+  onCancel?: () => void;
   mode?: 'create' | 'edit';
 }
 
@@ -39,6 +40,7 @@ interface EditProjectModalProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   project: ProjectModel;
   onEdit: (name: string, description: string, techs: string[]) => Promise<void>;
+  onCancel?: () => void;
 }
 
 export default function NewProjectModal({ 
@@ -213,12 +215,33 @@ export default function NewProjectModal({
                         </div>
                       </div>
                       <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                        <button
-                          type="submit"
-                          className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                        >
-                          Save
-                        </button>
+                        <div className="flex justify-end space-x-5">
+                          <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                            onClick={() => {
+                              setIsOpen(false);
+                              if (customSubmit && mode === 'edit') {
+                                setSelectedTechs(
+                                  (initialData?.techs?.map(tech => ({
+                                    id: tech.masterTechId,
+                                    label: tech.tech.label,
+                                    slug: tech.tech.label.toLowerCase(),
+                                    imgUrl: tech.tech.imgUrl
+                                  })) || [])
+                                );
+                              }
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                          >
+                            Save
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </form>
@@ -233,6 +256,20 @@ export default function NewProjectModal({
 }
 
 export function EditProjectModal({ isOpen, setIsOpen, project, onEdit }: EditProjectModalProps) {
+  const [originalData] = useState({
+    title: project.name,
+    description: project.description,
+    techs: project.techs
+  });
+
+  const handleCancel = () => {
+    setIsOpen(false);
+    onEdit(
+      originalData.title, 
+      originalData.description, 
+      originalData.techs.map(t => t.masterTechId));
+  };
+
   return (
     <NewProjectModal
       isOpen={isOpen}
@@ -243,6 +280,7 @@ export function EditProjectModal({ isOpen, setIsOpen, project, onEdit }: EditPro
         techs: project.techs
       }}
       onSubmit={onEdit}
+      onCancel={handleCancel}
       mode="edit"
     />
   );

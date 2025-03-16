@@ -226,6 +226,16 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
+  const handleCancelEdit = async () => {
+    await editProject({
+      projectId: project.id,
+      name: project.name,
+      description: project.description,
+      techs: project.techs.map(t => t.masterTechId),
+    });
+    setIsEditModalOpen(false);
+  };
+
 
   return (
     <>
@@ -234,6 +244,7 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
         setIsOpen={setIsEditModalOpen}
         project={project}
         onEdit={handleEditProject}
+        onCancel={handleCancelEdit}
     />
     <div
       key={project.id}

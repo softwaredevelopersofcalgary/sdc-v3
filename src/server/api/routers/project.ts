@@ -214,6 +214,13 @@ export const projectRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Clean up the tech's assigned to the project first.
+      await ctx.prisma.tech.deleteMany({
+        where: {
+          projectId: input.projectId
+        }
+      });
+
       return ctx.prisma.project.delete({
         where: {
           id: input.projectId
