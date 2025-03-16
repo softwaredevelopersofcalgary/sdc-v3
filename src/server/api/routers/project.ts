@@ -193,6 +193,34 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+    deleteAllProjectComments: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.comment.deleteMany({
+        where: {
+          projectId: input.projectId
+        },
+      });
+    }),
+
+  deleteProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.project.delete({
+        where: {
+          id: input.projectId
+        },
+      });
+    }),
+
   joinProject: protectedProcedure
     .input(
       z.object({

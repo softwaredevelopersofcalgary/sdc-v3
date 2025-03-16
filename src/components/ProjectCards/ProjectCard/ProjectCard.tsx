@@ -119,6 +119,24 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
       },
     });
 
+  const { mutateAsync: deleteProject, isLoading: deleteProjectIsLoading } =
+    api.projects.deleteProject.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+    });
+
+  const { mutateAsync: deleteAllProjectComments } = 
+    api.projects.deleteAllProjectComments.useMutation({
+    onSuccess: async () => {
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
+    }
+  });
+
   const handleAttendEvent = async () => {
     console.log("userID: ", user?.role);
     await attendEvent({
@@ -158,6 +176,23 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
+  const handleDeleteProject = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete this project?');
+
+    if (confirmed) {
+      try {
+        await deleteAllProjectComments({
+          projectId: project.id 
+        });
+        await deleteProject({
+          projectId: project.id,
+        });
+      } catch (error) {
+        console.error("Error deleting prject and comments: ", error);
+      }
+    }
+  };
+
 
   const handleUpvote = async () => {
     await mutateAsync({
@@ -182,26 +217,42 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
               <TechTagRow techs={project.techs} />
             </div>
             {user && (
-              <div className="py-2">
-                <PillButton
+              <div className="py-2 flex items-center justify-between">
+              <PillButton
+                label={
+                joinProjectIsLoading || leaveProjectIsLoading
+                  ? "Loading..."
+                  : project.isMember
+                  ? "Leave Project"
+                  : "Join Project"
+                }
+                isMember={project?.isMember}
+                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
+                handleClick={
+                joinProjectIsLoading || leaveProjectIsLoading
+                  ? () => void null
+                  : project?.isMember
+                  ? handleLeaveProject
+                  : handleJoinProject
+                }
+              />
+              {user.id === project.author.id && (
+                <div className="flex space-x-4">
+                {/* TODO: Add an edit button and handle all cases. */}
+                <PillButton 
                   label={
-                    joinProjectIsLoading || leaveProjectIsLoading
-                      ? "Loading..."
-                      : project.isMember
-                      ? "Leave Project"
-                      : "Join Project"
+                    deleteProjectIsLoading
+                    ? "Loading..."
+                    : "Delete" 
                   }
                   isMember={project?.isMember}
                   isUserPartOfAnyProject={project.isUserPartOfAnyProject}
-                  isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                  handleClick = {
-                    joinProjectIsLoading || leaveProjectIsLoading
-                      ? () => void null
-                      : project?.isMember
-                      ? handleLeaveProject
-                      : handleJoinProject
-                  }
+                  isLoading={deleteProjectIsLoading}
+                  handleClick={handleDeleteProject}
                 />
+                </div>
+              )}
               </div>
             )}
             {project.members && project.members?.length > 0 && (
