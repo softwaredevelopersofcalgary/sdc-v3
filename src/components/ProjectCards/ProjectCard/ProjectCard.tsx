@@ -199,9 +199,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
 
     if (confirmed) {
       try {
-        await deleteAllProjectComments({
-          projectId: project.id 
-        });
         await deleteProject({
           projectId: project.id,
         });

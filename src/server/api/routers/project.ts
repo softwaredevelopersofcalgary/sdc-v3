@@ -214,18 +214,47 @@ export const projectRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Clean up the tech's assigned to the project first.
-      await ctx.prisma.tech.deleteMany({
-        where: {
-          projectId: input.projectId
-        }
+      const tx = await ctx.prisma.$transaction(async (prisma) => {
+        // Delete all likes
+        await prisma.like.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Delete all comments
+        await prisma.comment.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Clean up tech associations
+        await prisma.tech.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Update project to remove all member connections
+        await prisma.project.update({
+          where: { id: input.projectId },
+          data: {
+            members: {
+              set: [] // This clears all member connections
+            }
+          }
+        });
+
+        // Delete the project and return it
+        return prisma.project.delete({
+          where: {
+            id: input.projectId
+          }
+        });
       });
 
-      return ctx.prisma.project.delete({
-        where: {
-          id: input.projectId
-        },
-      });
+      return tx;
     }),
 
   editProject: protectedProcedure

@@ -83,7 +83,7 @@ export default function NewProjectModal({
     })) || []
   );
 
-  const { handleSubmit, register } = useForm({
+  const { handleSubmit, register, reset } = useForm({
     defaultValues: {
       title: initialData?.title || '',
       description: initialData?.description || ''
@@ -247,6 +247,10 @@ export default function NewProjectModal({
                                     imgUrl: tech.tech.imgUrl
                                   })) || [])
                                 );
+                                reset({
+                                  title: initialData?.title || '',
+                                  description: initialData?.description || ''
+                                });
                               }
                             }}
                           >
@@ -273,12 +277,6 @@ export default function NewProjectModal({
 }
 
 export function EditProjectModal({ isOpen, setIsOpen, project, onEdit, onCancel }: EditProjectModalProps) {
-  const [originalData] = useState({
-    title: project.name,
-    description: project.description,
-    techs: project.techs
-  });
-
   const handleCancel = () => {
     setIsOpen(false);
     if (onCancel) {
