@@ -237,7 +237,7 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
                   : handleJoinProject
                 }
               />
-              {user.id === project.author.id && (
+              {(user.id === project.author.id || user.role === "MOD" || user.role === "ADMIN") && (
                 <div className="flex space-x-4">
                 {/* TODO: Add an edit button and handle all cases. */}
                 <PillButton 
