@@ -193,6 +193,126 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+    deleteAllProjectComments: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.comment.deleteMany({
+        where: {
+          projectId: input.projectId
+        },
+      });
+    }),
+
+  deleteProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const tx = await ctx.prisma.$transaction(async (prisma) => {
+        // Delete all likes
+        await prisma.like.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Delete all comments
+        await prisma.comment.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Clean up tech associations
+        await prisma.tech.deleteMany({
+          where: {
+            projectId: input.projectId
+          }
+        });
+
+        // Update project to remove all member connections
+        await prisma.project.update({
+          where: { id: input.projectId },
+          data: {
+            members: {
+              set: [] // This clears all member connections
+            }
+          }
+        });
+
+        // Delete the project and return it
+        return prisma.project.delete({
+          where: {
+            id: input.projectId
+          }
+        });
+      });
+
+      return tx;
+    }),
+
+  editProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        name: z.string(),
+        description: z.string(),
+        techs: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingProject = await ctx.prisma.project.findUnique({
+        where: { id: input.projectId },
+        include: { techs: true }
+      });
+
+      const existingTechIds = existingProject?.techs.map(t => t.id) || [];
+      const newTechIds = input.techs;
+
+      const techsToAdd = newTechIds.filter(id => !existingTechIds.includes(id));
+      const techsToRemove = existingTechIds.filter(id => !newTechIds.includes(id));
+
+      if (techsToRemove.length > 0) {
+        await ctx.prisma.tech.deleteMany({
+          where: {
+            id: {
+              in: techsToRemove
+            }
+          }
+        });
+      }
+
+      return ctx.prisma.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          name: input.name,
+          description: input.description,
+          techs: {
+            disconnect: techsToRemove.map(id => ({ id})),
+            connectOrCreate: techsToAdd.map(tech => ({
+              where: { id: tech},
+              create: {masterTechId: tech }
+            }))
+          }
+        },
+        include: {
+          techs: {
+            include: {
+              tech: true
+            }
+          }
+        }
+      });
+    }),
+
   joinProject: protectedProcedure
     .input(
       z.object({
