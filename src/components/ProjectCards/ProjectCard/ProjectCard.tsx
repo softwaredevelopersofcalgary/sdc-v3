@@ -13,10 +13,12 @@ import { HandThumbUpIcon as HandThumbUpIconSolid } from "@heroicons/react/24/sol
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import TechTagRow from "../../TechTagRow/TechTagRow";
 import { ProjectModel } from "../Project.model";
 import MemberTagRow from "@/components/atoms/MemberTagRow/MemberTagRow";
 import { boolean } from "zod";
+import { EditProjectModal } from "@/components/NewProjectModal/NewProjectModal";
 
 interface ProjectCardProps {
   project: ProjectModel;
@@ -119,6 +121,40 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
       },
     });
 
+  const { mutateAsync: deleteProject, isLoading: deleteProjectIsLoading } =
+    api.projects.deleteProject.useMutation({
+      onSuccess: async () => {
+        await utils.events.findUnique.invalidate({
+          id: project.eventId,
+        });
+      },
+    });
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { mutateAsync: editProject, isLoading: editProjectIsLoading } =
+    api.projects.editProject.useMutation({
+      onSuccess: async () => {
+        await Promise.all([
+          utils.events.findUnique.invalidate({
+          id: project.eventId,
+        }),
+        utils.projects.findUnique.invalidate({
+          id: project.eventId,
+        }),
+      ]);
+      },
+    });
+
+  const { mutateAsync: deleteAllProjectComments } = 
+    api.projects.deleteAllProjectComments.useMutation({
+    onSuccess: async () => {
+      await utils.events.findUnique.invalidate({
+        id: project.eventId,
+      });
+    }
+  });
+
   const handleAttendEvent = async () => {
     console.log("userID: ", user?.role);
     await attendEvent({
@@ -158,6 +194,29 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
+  const handleDeleteProject = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete this project?');
+
+    if (confirmed) {
+      try {
+        await deleteProject({
+          projectId: project.id,
+        });
+      } catch (error) {
+        console.error("Error deleting prject and comments: ", error);
+      }
+    }
+  };
+
+  const handleEditProject = async (name: string, description: string, techs: string[]) => {
+    await editProject({
+      projectId: project.id,
+      name,
+      description,
+      techs,
+    });
+    setIsEditModalOpen(false);
+  }
 
   const handleUpvote = async () => {
     await mutateAsync({
@@ -166,8 +225,26 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
     });
   };
 
+  const handleCancelEdit = async () => {
+    await editProject({
+      projectId: project.id,
+      name: project.name,
+      description: project.description,
+      techs: project.techs.map(t => t.masterTechId),
+    });
+    setIsEditModalOpen(false);
+  };
+
 
   return (
+    <>
+      <EditProjectModal
+        isOpen={isEditModalOpen}
+        setIsOpen={setIsEditModalOpen}
+        project={project}
+        onEdit={handleEditProject}
+        onCancel={handleCancelEdit}
+    />
     <div
       key={project.id}
       className="flex w-full flex-col overflow-hidden rounded-lg shadow-lg"
@@ -182,26 +259,50 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
               <TechTagRow techs={project.techs} />
             </div>
             {user && (
-              <div className="py-2">
+              <div className="py-2 flex items-center justify-between">
+              <PillButton
+                label={
+                joinProjectIsLoading || leaveProjectIsLoading
+                  ? "Loading..."
+                  : project.isMember
+                  ? "Leave Project"
+                  : "Join Project"
+                }
+                isMember={project?.isMember}
+                isUserPartOfAnyProject={project.isUserPartOfAnyProject}
+                isLoading={joinProjectIsLoading || leaveProjectIsLoading}
+                handleClick={
+                joinProjectIsLoading || leaveProjectIsLoading
+                  ? () => void null
+                  : project?.isMember
+                  ? handleLeaveProject
+                  : handleJoinProject
+                }
+              />
+              {(user.id === project.author.id || user.role === "MOD" || user.role === "ADMIN") && (
+                <div className="flex space-x-4">
                 <PillButton
                   label={
-                    joinProjectIsLoading || leaveProjectIsLoading
-                      ? "Loading..."
-                      : project.isMember
-                      ? "Leave Project"
-                      : "Join Project"
+                    editProjectIsLoading
+                    ? "Loading..."
+                    : "Edit"
                   }
                   isMember={project?.isMember}
-                  isUserPartOfAnyProject={project.isUserPartOfAnyProject}
-                  isLoading={joinProjectIsLoading || leaveProjectIsLoading}
-                  handleClick = {
-                    joinProjectIsLoading || leaveProjectIsLoading
-                      ? () => void null
-                      : project?.isMember
-                      ? handleLeaveProject
-                      : handleJoinProject
-                  }
+                  isLoading={editProjectIsLoading}
+                  handleClick={() => setIsEditModalOpen(true)}
                 />
+                <PillButton 
+                  label={
+                    deleteProjectIsLoading
+                    ? "Loading..."
+                    : "Delete" 
+                  }
+                  isMember={project?.isMember}
+                  isLoading={deleteProjectIsLoading}
+                  handleClick={handleDeleteProject}
+                />
+                </div>
+              )}
               </div>
             )}
             {project.members && project.members?.length > 0 && (
@@ -281,5 +382,6 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
         ))}
       </div>
     </div>
+    </>
   );
 }
