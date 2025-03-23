@@ -21,7 +21,7 @@ const QRCodeButton: React.FC<Props> = (props) => {
       }
     };
 
-    generateQRCode();
+    void generateQRCode();
   }, [props.link]);
 
   const toggle = () => {
