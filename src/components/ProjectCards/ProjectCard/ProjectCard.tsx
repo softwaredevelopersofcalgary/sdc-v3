@@ -288,6 +288,7 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
                     : "Edit"
                   }
                   isMember={project?.isMember}
+                  isUserPartOfAnyProject={false}
                   isLoading={editProjectIsLoading}
                   handleClick={() => setIsEditModalOpen(true)}
                 />
@@ -298,6 +299,7 @@ export default function ProjectCard({ project, isUserAttendEvent }: ProjectCardP
                     : "Delete" 
                   }
                   isMember={project?.isMember}
+                  isUserPartOfAnyProject={false}
                   isLoading={deleteProjectIsLoading}
                   handleClick={handleDeleteProject}
                 />
