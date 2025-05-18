@@ -204,6 +204,21 @@ export default function NavBar() {
     void loadChapters();
   }, []);
 
+  //Test navigation for the hovermenu
+  // const navigation = [
+  //   { name: "Home", href: "/", current: false },
+  //   {
+  //     name: "Chapters",
+  //     href: "",
+  //     current: false,
+  //     subLinks: [
+  //       { name: "Calgary", href: "/events/calgary", current: false },
+  //       { name: "Edmonton", href: "/events/edmonton", current: false },
+  //       { name: "Vancouver", href: "/events/vancouver", current: false },
+  //     ],
+  //   },
+  // ];
+
   const navigation = [
     { name: "Home", href: "/", current: false },
     {
