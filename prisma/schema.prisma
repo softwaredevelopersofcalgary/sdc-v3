@@ -80,6 +80,12 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Chapter {
+  id     String  @id @default(cuid())
+  name   String
+  events Event[]
+}
+
 model Event {
   id          String    @id @default(cuid())
   name        String
@@ -94,6 +100,8 @@ model Event {
   users       User[]
   projects    Project[]
   members     User[]    @relation("EventMembers")
+  chapterId   String?
+  chapter     Chapter?   @relation(fields: [chapterId], references: [id])
 }
 
 model SuperProject {
