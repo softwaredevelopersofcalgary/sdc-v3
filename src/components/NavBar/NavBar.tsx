@@ -8,22 +8,31 @@ import useUserSession from "@/hooks/useUserSession";
 import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 
-const TopNavigationBar = ({ currentPath }) => {
+type Chapter = {
+  id: string;
+  name: string;
+  slug?: string;
+};
+
+const TopNavigationBar = ({ currentPath, navigation }) => {
   return (
     <>
-      <Link
-        key={"home"}
-        href={"/"}
-        className={classNames(
-          currentRouteIsActive(currentPath, "/")
-            ? "border-gray-500  text-gray-900"
-            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-        )}
-      >
-        Home
-      </Link>
+      {navigation.map((item) => (
+        <Link
+          key={item.name}
+          href={item.href}
+          className={classNames(
+            currentRouteIsActive(currentPath, item.href)
+              ? "border-gray-500 text-gray-900"
+              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+            "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+          )}
+        >
+          {item.name}
+        </Link>
+      ))}
     </>
   );
 };
@@ -80,17 +89,34 @@ const HamburgerNavigationBar = ({
 };
 
 export default function NavBar() {
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+
+  useEffect(() => {
+    async function loadChapters() {
+      try {
+        const res = await fetch("/api/chapters");
+        if (!res.ok) throw new Error("Failed to load chapters");
+        const data = (await res.json()) as Chapter[];
+        setChapters(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    void loadChapters();
+  }, []);
+
   const navigation = [
     { name: "Home", href: "/", current: false },
     {
       name: "Chapters",
       href: "/events",
       current: false,
-      subLinks: [
-        { name: "Calgary", href: "/events/calgary", current: false },
-        { name: "Edmonton", href: "/events/edmonton", current: false },
-        { name: "Vancouver", href: "/events/vancouver", current: false },
-      ],
+      subLinks: chapters.map((c) => ({
+        name: c.name,
+        // use slug if you have it, otherwise id
+        href: `/events/${c.slug ?? c.id}`,
+        current: false,
+      })),
     },
     // { name: "Projects", href: "/projects", current: false },
     // { name: "Join Us", href: "/join", current: false },
@@ -135,7 +161,7 @@ export default function NavBar() {
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                     {/* Current: "border-gray-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                    <TopNavigationBar currentPath={pathname} />
+                    <TopNavigationBar currentPath={pathname} navigation={navigation} />
                   </div>
                 </div>
                 <div className="hidden items-center gap-4 sm:flex sm:flex-row sm:justify-center">
