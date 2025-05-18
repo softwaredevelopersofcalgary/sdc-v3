@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import React from "react";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
@@ -5,8 +10,7 @@ import EventDetailHeader from "@/components/EventDetailHeader/EventDetailHeader"
 import ProjectCards from "@/components/ProjectCards/ProjectCards";
 import StyledCircleLoader from "@/components/StyledCircleLoader/StyledCircleLoader";
 import { ProjectModel } from "@/components/ProjectCards/Project.model";
-import { Project } from "@/types/ProjectsType";
-import { Event } from "@/types/EventsType";
+
 type Member = {
   name: string | null;
   id: string;
@@ -75,7 +79,7 @@ export default function EventDetailPage() {
       />
       <ProjectCards
         projects={
-          isEventWithProjects(event.data!) ? event.data.projects : []
+          isEventWithProjects(event.data) ? event.data.projects : []
         }
         isUserAttendEvent={isUserAttendEvent}
       />

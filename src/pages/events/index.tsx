@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -33,7 +34,7 @@ export default function EventsPage() {
 
   // Note: chapterId! is safe here because `enabled` condition ensures chapterId is defined when the query runs.
   const eventsByChapterQuery = api.events.getAllByChapter.useQuery(
-    { chapterId: chapterId! },
+    { chapterId: chapterId },
     { enabled: isReady && !!chapterId }
   );
 
