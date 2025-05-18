@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable react/jsx-key */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-
 import {
   Disclosure,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -36,6 +38,7 @@ const HoverMenu = ({ navigation_item_with_sublinks, currentPath }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <Link
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           key={navigation_item_with_sublinks.name}
           href=""
           className={classNames(
@@ -191,45 +194,16 @@ const HamburgerNavigationBar = ({
 };
 
 export default function NavBar() {
-
-  // const router = useRouter();
-  // const user = useUserSession();
   const utils = api.useContext();
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  // 1) Fetch chapters exactly like your event mutations
   const {
     data: chapters = [],
     isLoading: chaptersLoading,
     error: chaptersError,
-  } = api.chapters.getAll.useQuery(undefined, {
-    onSuccess: () => {
-      // if you ever need to manually refetch/invalidate
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      void utils.chapters.getAll.invalidate();
-    },
-  });
+  } = api.chapters.getAll.useQuery();
 
-  console.log("chapters: ", chapters);
-  // 2) Optional: guard UI for loading / errors
-  useEffect(() => {
-    console.log({ chaptersLoading, chaptersError, chapters });
-  }, [chaptersLoading, chaptersError, chapters]);
-
-  //Test navigation for the hovermenu
-  // const navigation = [
-  //   { name: "Home", href: "/", current: false },
-  //   {
-  //     name: "Chapters",
-  //     href: "",
-  //     current: false,
-  //     subLinks: [
-  //       { name: "Calgary", href: "/events/calgary", current: false },
-  //       { name: "Edmonton", href: "/events/edmonton", current: false },
-  //       { name: "Vancouver", href: "/events/vancouver", current: false },
-  //     ],
-  //   },
-  // ];
+  console.log("chapters: ", chapters); 
 
   const navigation = [
     { name: "Home", href: "/", current: false },
@@ -239,13 +213,10 @@ export default function NavBar() {
       current: false,
       subLinks: chapters.map((c) => ({
         name: c.name,
-        // use slug if you have it, otherwise id
-        href: `/events/${c.slug ?? c.id}`,
+        href: `/events?chapterId=${c.id}`,
         current: false,
       })),
     },
-    // { name: "Projects", href: "/projects", current: false },
-    // { name: "Join Us", href: "/join", current: false },
   ];
   const router = useRouter();
   const user = useUserSession();

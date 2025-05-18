@@ -11,6 +11,14 @@ import { z } from "zod";
 import { createEventSchema } from "./Event/event.schema";
 
 export const eventRouter = createTRPCRouter({
+  getAllByChapter: publicProcedure
+  .input(z.object({ chapterId: z.string() }))
+  .query(async ({ ctx, input }) => {
+    return ctx.prisma.event.findMany({
+      where: { chapterId: input.chapterId },
+      orderBy: { date: "desc" },
+    });
+  }),
   getAll: publicProcedure.query(async ({ ctx }) => {
     const events = await ctx.prisma.event.findMany({
       orderBy: {

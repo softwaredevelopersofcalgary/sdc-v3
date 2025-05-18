@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
@@ -9,28 +14,55 @@ import { api } from "@/utils/api";
 import React, { useState } from "react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, ChakraProvider } from "@chakra-ui/react";
 import EventCard from "./EventCard";
+import { useRouter } from 'next/router';
 
 export default function EventsPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isError, data, isLoading, error } = api.events.getAll.useQuery();
+  // const { isError, data, isLoading, error } = api.events.getAll.useQuery();
 
   const user = useUserSession();
   const userIsEditor = IsUserEditor();
 
-  if (isLoading) return <StyledCircleLoader isLoading={isLoading} />;
-  if (isError) return <div>{JSON.stringify(error)}</div>;
-  console.log("data: ");
-  console.log(data);
-  const now = new Date();
+  const router = useRouter();
+  const { isReady, query } = router;
 
-  // Adjust 'now' to 24 hours ago for comparison
+  const chapterId =
+    isReady && typeof query?.chapterId === "string"
+      ? query.chapterId
+      : undefined;
+
+  // Note: chapterId! is safe here because `enabled` condition ensures chapterId is defined when the query runs.
+  const eventsByChapterQuery = api.events.getAllByChapter.useQuery(
+    { chapterId: chapterId! },
+    { enabled: isReady && !!chapterId }
+  );
+
+  // Fetch all events if chapterId is NOT present
+  const allEventsQuery = api.events.getAll.useQuery(
+    undefined,
+    { enabled: isReady && !chapterId } 
+  );
+
+  if (!isReady) {
+    return <StyledCircleLoader isLoading={true} />;
+  }
+
+  const currentQuery = chapterId ? eventsByChapterQuery : allEventsQuery;
+  const {
+    data: events = [],
+    isLoading,
+    isError,
+    error,
+  } = currentQuery;
+
+  const now = new Date();
   now.setHours(now.getHours() - 24);
 
-  const upcoming = data
+  const upcoming = events
     .filter((event) => new Date(event.date) > now)
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const past = data
+  const past = events
     .filter((event) => new Date(event.date) <= now)
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -59,16 +91,14 @@ export default function EventsPage() {
             <TabPanel>
               <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
                 {upcoming?.map((post, index) => (
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  <EventCard key={index} event={post} />
+                  <EventCard key={post.id ?? index} event={post} />
                 ))}
               </div>
             </TabPanel>
             <TabPanel>
               <div className="mx-16 mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
                 {past?.map((post, index) => (
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                  <EventCard key={index} event={post} />
+                  <EventCard key={post.id ?? index} event={post} />
                 ))}
               </div>
             </TabPanel>

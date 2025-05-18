@@ -55,7 +55,7 @@ const Footer = () => {
         </div>
         <div className="mt-8 md:order-1 md:mt-0">
           <span className="text-center text-base text-gray-400">
-            &copy; {format(new Date(), "yyyy")} Rocket Punch Studios, All rights
+            &copy; {format(new Date(), "yyyy")} Software Developers of Calgary, All rights
             reserved.
           </span>
         </div>

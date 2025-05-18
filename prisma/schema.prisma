@@ -100,8 +100,8 @@ model Event {
   users       User[]
   projects    Project[]
   members     User[]    @relation("EventMembers")
-  chapterId   String
-  chapter     Chapter   @relation(fields: [chapterId], references: [id])
+  chapterId   String?
+  chapter     Chapter?   @relation(fields: [chapterId], references: [id])
 }
 
 model SuperProject {
