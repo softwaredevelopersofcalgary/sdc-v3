@@ -1,3 +1,5 @@
+// @ts-ignore
+
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -7,14 +9,92 @@ import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
 
-const navigation = [
-  { name: "Home", href: "/", current: false },
-  { name: "Events", href: "/events", current: false },
-  // { name: "Projects", href: "/projects", current: false },
-  // { name: "Join Us", href: "/join", current: false },
-];
+const TopNavigationBar = ({ currentPath }) => {
+  return (
+    <>
+      <Link
+        key={"home"}
+        href={"/"}
+        className={classNames(
+          currentRouteIsActive(currentPath, "/")
+            ? "border-gray-500  text-gray-900"
+            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+        )}
+      >
+        Home
+      </Link>
+    </>
+  );
+};
+
+const HamburgerNavigationBar = ({
+  currentPath,
+  navigation,
+  user,
+  router,
+  handleButtonClick,
+}) => {
+  return (
+    <>
+      <Disclosure.Panel className="sm:hidden">
+        <div className="space-y-1 pt-2 pb-4">
+          {/* Current: "bg-gray-50 border-gray-500 text-gray-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
+          {navigation.map((item) => (
+            <Disclosure.Button
+              key={item.name}
+              as="a"
+              href={item.href}
+              className={classNames(
+                currentRouteIsActive(currentPath, item.href)
+                  ? "border-gray-500 bg-gray-50 text-gray-700"
+                  : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
+                "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
+              )}
+            >
+              {item.name}
+            </Disclosure.Button>
+          ))}
+          {user && (
+            <Disclosure.Button
+              as="a"
+              onClick={() => void router.push(`/user/${user.id}`)}
+              className="block border-l-4 border-transparent py-2 pl-3
+                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+            >
+              Profile
+            </Disclosure.Button>
+          )}
+          <Disclosure.Button
+            as="a"
+            onClick={() => void handleButtonClick()}
+            className="block border-l-4 border-transparent py-2 pl-3
+                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+          >
+            {user ? "Logout" : "Login"}
+          </Disclosure.Button>
+        </div>
+      </Disclosure.Panel>
+    </>
+  );
+};
 
 export default function NavBar() {
+  const navigation = [
+    { name: "Home", href: "/", current: false },
+    {
+      name: "Chapters",
+      href: "/events",
+      current: false,
+      subLinks: [
+        { name: "Calgary", href: "/events/calgary", current: false },
+        { name: "Edmonton", href: "/events/edmonton", current: false },
+        { name: "Vancouver", href: "/events/vancouver", current: false },
+      ],
+    },
+    // { name: "Projects", href: "/projects", current: false },
+    // { name: "Join Us", href: "/join", current: false },
+  ];
   const router = useRouter();
   const user = useUserSession();
   const pathname = router.pathname;
@@ -55,20 +135,7 @@ export default function NavBar() {
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                     {/* Current: "border-gray-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                    {navigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          currentRouteIsActive(pathname, item.href)
-                            ? "border-gray-500  text-gray-900"
-                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                    <TopNavigationBar currentPath={pathname} />
                   </div>
                 </div>
                 <div className="hidden items-center gap-4 sm:flex sm:flex-row sm:justify-center">
@@ -109,44 +176,13 @@ export default function NavBar() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 pt-2 pb-4">
-              {/* Current: "bg-gray-50 border-gray-500 text-gray-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={classNames(
-                    currentRouteIsActive(pathname, item.href)
-                      ? "border-gray-500 bg-gray-50 text-gray-700"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
-                    "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
-                  )}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
-              {user && (
-                <Disclosure.Button
-                  as="a"
-                  onClick={() => void router.push(`/user/${user.id}`)}
-                  className="block border-l-4 border-transparent py-2 pl-3
-                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
-                >
-                  Profile
-                </Disclosure.Button>
-              )}
-              <Disclosure.Button
-                as="a"
-                onClick={() => void handleButtonClick()}
-                className="block border-l-4 border-transparent py-2 pl-3
-                  pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
-              >
-                {user ? "Logout" : "Login"}
-              </Disclosure.Button>
-            </div>
-          </Disclosure.Panel>
+          <HamburgerNavigationBar
+            currentPath={pathname}
+            navigation={navigation}
+            user={user}
+            router={router}
+            handleButtonClick={handleButtonClick}
+          />
         </>
       )}
     </Disclosure>
