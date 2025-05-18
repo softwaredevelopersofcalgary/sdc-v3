@@ -9,6 +9,9 @@ import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { api } from "@/utils/api";
+import { type RouterOutputs } from "@/utils/api";
+
 
 type Chapter = {
   id: string;
@@ -89,21 +92,30 @@ const HamburgerNavigationBar = ({
 };
 
 export default function NavBar() {
-  const [chapters, setChapters] = useState<Chapter[]>([]);
 
+  // const router = useRouter();
+  // const user = useUserSession();
+  const utils = api.useContext();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  // 1) Fetch chapters exactly like your event mutations
+  const {
+    data: chapters = [],
+    isLoading: chaptersLoading,
+    error: chaptersError,
+  } = api.chapters.getAll.useQuery(undefined, {
+    onSuccess: () => {
+      // if you ever need to manually refetch/invalidate
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      void utils.chapters.getAll.invalidate();
+    },
+  });
+
+  console.log("chapters: ", chapters);
+  // 2) Optional: guard UI for loading / errors
   useEffect(() => {
-    async function loadChapters() {
-      try {
-        const res = await fetch("/api/chapters");
-        if (!res.ok) throw new Error("Failed to load chapters");
-        const data = (await res.json()) as Chapter[];
-        setChapters(data);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    void loadChapters();
-  }, []);
+    console.log({ chaptersLoading, chaptersError, chapters });
+  }, [chaptersLoading, chaptersError, chapters]);
 
   const navigation = [
     { name: "Home", href: "/", current: false },
