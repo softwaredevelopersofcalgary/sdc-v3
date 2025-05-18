@@ -14,7 +14,13 @@ import useUserSession from "@/hooks/useUserSession";
 import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type Chapter = {
+  id: string;
+  name: string;
+  slug?: string;
+};
 
 const HoverMenu = ({ navigation_item_with_sublinks, currentPath }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -182,17 +188,34 @@ const HamburgerNavigationBar = ({
 };
 
 export default function NavBar() {
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+
+  useEffect(() => {
+    async function loadChapters() {
+      try {
+        const res = await fetch("/api/chapters");
+        if (!res.ok) throw new Error("Failed to load chapters");
+        const data = (await res.json()) as Chapter[];
+        setChapters(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    void loadChapters();
+  }, []);
+
   const navigation = [
     { name: "Home", href: "/", current: false },
     {
       name: "Chapters",
       href: "",
       current: false,
-      subLinks: [
-        { name: "Calgary", href: "/events/calgary", current: false },
-        { name: "Edmonton", href: "/events/edmonton", current: false },
-        { name: "Vancouver", href: "/events/vancouver", current: false },
-      ],
+      subLinks: chapters.map((c) => ({
+        name: c.name,
+        // use slug if you have it, otherwise id
+        href: `/events/${c.slug ?? c.id}`,
+        current: false,
+      })),
     },
     // { name: "Projects", href: "/projects", current: false },
     // { name: "Join Us", href: "/join", current: false },
