@@ -1,6 +1,12 @@
 // @ts-ignore
 
-import { Disclosure } from "@headlessui/react";
+import {
+  Disclosure,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,22 +14,82 @@ import useUserSession from "@/hooks/useUserSession";
 import classNames from "@/helpers/classNames";
 import currentRouteIsActive from "@/helpers/currentRouteIsActive";
 import { signIn, signOut } from "next-auth/react";
+import { useState } from "react";
 
-const TopNavigationBar = ({ currentPath }) => {
+const HoverMenu = ({ navigation_item_with_sublinks, currentPath }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <>
-      <Link
-        key={"home"}
-        href={"/"}
-        className={classNames(
-          currentRouteIsActive(currentPath, "/")
-            ? "border-gray-500  text-gray-900"
-            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-        )}
+      <span
+        style={{ position: "relative", display: "inline-flex" }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        Home
-      </Link>
+        <Link
+          key={navigation_item_with_sublinks.name}
+          href=""
+          className={classNames(
+            "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+            "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+          )}
+        >
+          {navigation_item_with_sublinks.name}
+        </Link>
+
+        {isHovered && (
+          <div className="absolute left-0 top-full z-50 w-48 rounded-md bg-white shadow-lg">
+            <div className="py-1">
+              {navigation_item_with_sublinks.subLinks.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={classNames(
+                    currentRouteIsActive(currentPath, item.href)
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                    "block px-4 py-2 text-sm"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </span>
+    </>
+  );
+};
+
+const TopNavigationBar = ({ currentPath, navigation }) => {
+  return (
+    <>
+      {navigation.map((item) => {
+        if (item.subLinks) {
+          return (
+            <HoverMenu
+              navigation_item_with_sublinks={item}
+              currentPath={currentPath}
+            />
+          );
+        } else {
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={classNames(
+                currentRouteIsActive(currentPath, item.href)
+                  ? "border-gray-500  text-gray-900"
+                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+              )}
+            >
+              Home
+            </Link>
+          );
+        }
+      })}
     </>
   );
 };
@@ -40,21 +106,57 @@ const HamburgerNavigationBar = ({
       <Disclosure.Panel className="sm:hidden">
         <div className="space-y-1 pt-2 pb-4">
           {/* Current: "bg-gray-50 border-gray-500 text-gray-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
-          {navigation.map((item) => (
-            <Disclosure.Button
-              key={item.name}
-              as="a"
-              href={item.href}
-              className={classNames(
-                currentRouteIsActive(currentPath, item.href)
-                  ? "border-gray-500 bg-gray-50 text-gray-700"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
-                "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
-              )}
-            >
-              {item.name}
-            </Disclosure.Button>
-          ))}
+          {navigation.map((item) => {
+            if (!item.subLinks) {
+              return (
+                <Disclosure.Button
+                  key={item.name}
+                  as="a"
+                  href={item.href}
+                  className={classNames(
+                    currentRouteIsActive(currentPath, item.href)
+                      ? "border-gray-500 bg-gray-50 text-gray-700"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
+                    "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
+                  )}
+                >
+                  {item.name}
+                </Disclosure.Button>
+              );
+            } else {
+              return (
+                <>
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    href={""}
+                    className={classNames(
+                      "block cursor-default select-none border-l-4 border-transparent py-2 pl-3 pr-4 font-medium text-gray-500"
+                    )}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                  <>
+                    {item.subLinks.map((subItem) => (
+                      <Disclosure.Button
+                        key={subItem.name}
+                        as="a"
+                        href={subItem.href}
+                        className={classNames(
+                          currentRouteIsActive(currentPath, subItem.href)
+                            ? "border-gray-500 bg-gray-50 text-gray-700"
+                            : "border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700",
+                          "block border-l-4 py-2 pl-8 pr-4 text-base font-medium" // pl-8 for indentation
+                        )}
+                      >
+                        {subItem.name}
+                      </Disclosure.Button>
+                    ))}
+                  </>
+                </>
+              );
+            }
+          })}
           {user && (
             <Disclosure.Button
               as="a"
@@ -84,7 +186,7 @@ export default function NavBar() {
     { name: "Home", href: "/", current: false },
     {
       name: "Chapters",
-      href: "/events",
+      href: "",
       current: false,
       subLinks: [
         { name: "Calgary", href: "/events/calgary", current: false },
@@ -135,7 +237,10 @@ export default function NavBar() {
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                     {/* Current: "border-gray-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                    <TopNavigationBar currentPath={pathname} />
+                    <TopNavigationBar
+                      currentPath={pathname}
+                      navigation={navigation}
+                    />
                   </div>
                 </div>
                 <div className="hidden items-center gap-4 sm:flex sm:flex-row sm:justify-center">
