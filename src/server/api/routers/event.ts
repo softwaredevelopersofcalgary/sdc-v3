@@ -156,6 +156,7 @@ export const eventRouter = createTRPCRouter({
         location,
         description,
         startTime,
+        chapterId,
       } = input;
 
       const event = await ctx.prisma.event.create({
@@ -165,6 +166,7 @@ export const eventRouter = createTRPCRouter({
           description,
           startTime,
           location,
+          chapterId,
         },
       });
 

@@ -5,7 +5,8 @@ export const createEventSchema = z.object({
   date: z.date(),
   location: z.string(),
   description: z.string(),
-  startTime: z.string(),
+  startTime: z.string(), 
+  chapterId: z.string().nullable(),
 });
 
 export type createEventInput = z.TypeOf<typeof createEventSchema>;
