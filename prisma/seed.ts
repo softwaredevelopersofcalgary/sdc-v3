@@ -22,7 +22,6 @@ async function main() {
     }
   }
 
-  // Alternative approach - check if exists first
   const existingChapter = await prisma.chapter.findFirst({
     where: { name: "Calgary" },
   });
