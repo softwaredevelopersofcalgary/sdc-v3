@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createEventInput } from "@/server/api/routers/Event/event.schema";
+import type { createEventInput } from "@/server/api/routers/Event/event.schema";
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Dispatch, Fragment, SetStateAction, useRef } from "react";
+import React, { Fragment, useRef } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 
 interface NewEventModalProps {
@@ -16,7 +17,7 @@ export default function NewEventModal({
   isOpen,
   setIsOpen,
 }: NewEventModalProps) {
-  const { handleSubmit, register } = useForm();
+  const { handleSubmit, register } = useForm<createEventInput>();
   const utils = api.useContext();
 
   const cancelButtonRef = useRef(null);
