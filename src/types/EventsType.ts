@@ -1,5 +1,4 @@
-import { ProjectModel } from "@/components/ProjectCards/Project.model";
-import { Project } from "./ProjectsType";
+import type { ProjectModel } from "@/components/ProjectCards/Project.model";
 export interface Event {
     id: string;
     name: string;
