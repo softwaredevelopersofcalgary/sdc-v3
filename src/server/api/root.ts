@@ -7,6 +7,7 @@ import { likeRouter } from "./routers/like";
 import { userRouter } from "./routers/User/user";
 import { superProjectRouter } from "./routers/superProject";
 import { chapterRouter } from "./routers/chapter";
+import { contributorsRouter } from "./routers/contributors";
 
 /**
  * This is the primary router for your server.
@@ -21,7 +22,8 @@ export const appRouter = createTRPCRouter({
   likes: likeRouter,
   users: userRouter,
   superProjects: superProjectRouter, 
-  chapters: chapterRouter
+  chapters: chapterRouter,
+  contributors: contributorsRouter,
 });
 
 // export type definition of API

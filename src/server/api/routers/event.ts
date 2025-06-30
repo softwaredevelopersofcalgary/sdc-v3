@@ -8,7 +8,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { z } from "zod";
-import { createEventSchema } from "./Event/event.schema";
+import { createEventSchema } from "./schema/event.schema";
 
 export const eventRouter = createTRPCRouter({
   getAllByChapter: publicProcedure

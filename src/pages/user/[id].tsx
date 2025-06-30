@@ -5,7 +5,7 @@ import UserCard from "@/components/User/UserCard";
 import UserForm from "@/components/UserForm/UserForm";
 import UserTechsModal from "@/components/UserTechsModal/UserTechsModal";
 import { api } from "@/utils/api";
-import { MasterTech } from "@prisma/client";
+import type { MasterTech } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
 

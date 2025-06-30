@@ -1,3 +1,4 @@
+import ContributorsThanks from "@/components/Contributor/Contributor";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -184,6 +185,13 @@ const Home: NextPage = () => {
               </blockquote>
             </div>
           </div>
+        </div>
+      </section>
+      
+      {/* Contributors Section */}
+      <section className="bg-gray-50 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ContributorsThanks />
         </div>
       </section>
     </>

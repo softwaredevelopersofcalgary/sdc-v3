@@ -21,6 +21,18 @@ async function main() {
       });
     }
   }
+
+  const existingChapter = await prisma.chapter.findFirst({
+    where: { name: "Calgary" },
+  });
+
+  if (!existingChapter) {
+    await prisma.chapter.create({
+      data: {
+        name: "Calgary",
+      },
+    });
+  }
 }
 
 main()

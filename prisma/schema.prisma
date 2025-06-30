@@ -213,3 +213,16 @@ enum Role {
   MOD
   USER
 }
+
+model Contributor {
+  id            String   @id @default(cuid())
+  githubLogin   String   @unique
+  name          String?
+  imgUrl        String?
+  contributions Int
+  sortRank      Int
+  showPublic    Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  githubUrl     String? 
+  lastFetched   DateTime @default(now())
+}
