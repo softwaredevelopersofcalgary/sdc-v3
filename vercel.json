@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/create-events",
       "schedule": "0 7 * * 0"
+    },
+    {
+      "path": "/api/cron/sync-github-contributors",
+      "schedule": "0 8 * * 0"
     }
   ]
 }

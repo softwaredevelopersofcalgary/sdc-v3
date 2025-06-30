@@ -6,8 +6,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // Verify this is actually a cron request from Vercel
-  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET ?? ''}`) {
+    return res.status(401).json({ error: 'Unauthorized at Cron' });
   }
 
   console.log('Running scheduled event creation...');

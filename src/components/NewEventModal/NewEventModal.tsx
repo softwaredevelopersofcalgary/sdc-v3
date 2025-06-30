@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { createEventInput } from "@/server/api/routers/Event/event.schema";
+import type { createEventInput } from "@/server/api/routers/schema/event.schema";
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment, useRef } from "react";
