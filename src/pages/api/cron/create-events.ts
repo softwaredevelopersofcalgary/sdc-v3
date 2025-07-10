@@ -5,7 +5,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Verify this is actually a cron request from Vercel
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET ?? ''}`) {
     return res.status(401).json({ error: 'Unauthorized at Cron' });
   }
@@ -15,12 +14,10 @@ export default async function handler(
   try {
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-indexed month
+    const currentMonth = now.getMonth() + 1;
     
-    // Check current month
     await checkAndCreateEvent(currentYear, currentMonth);
     
-    // Also check next month to ensure we don't miss any events
     const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
     const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
     await checkAndCreateEvent(nextYear, nextMonth);

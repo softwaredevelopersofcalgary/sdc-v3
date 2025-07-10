@@ -45,7 +45,6 @@ const HomePage: NextPage = () => {
         </div>
       </main>
 
-      {/* Section */}
       <div className="relative bg-gray-400">
         <div className="absolute inset-0">
           <img
@@ -68,7 +67,6 @@ const HomePage: NextPage = () => {
         </div>
       </div>
 
-      {/* Testimonial */}
       <section className="overflow-hidden bg-white">
         <div className="relative mx-auto max-w-7xl px-4 pt-20 pb-12 sm:px-6 lg:px-8 lg:py-20">
           <svg
@@ -197,7 +195,6 @@ const HomePage: NextPage = () => {
         </div>
       </section>
       
-      {/* Contributors Section */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <ContributorsThanks />

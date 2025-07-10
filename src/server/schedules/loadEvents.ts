@@ -1,12 +1,10 @@
 import { prisma } from '@/server/db';
 import { getLastSaturdayOfMonth } from '@/utils/getLastSaturday';
 
-// Function to check if event exists and create if needed
 export async function checkAndCreateEvent(year: number, month: number): Promise<void> {
   try {
     const lastSaturday = getLastSaturdayOfMonth(year, month);
     
-    // Check if an event already exists on this date
     const existingEvent = await prisma.event.findFirst({
       where: {
         date: {
@@ -21,12 +19,10 @@ export async function checkAndCreateEvent(year: number, month: number): Promise<
       return;
     }
 
-    // Get default chapter (assuming Calgary based on your seed data)
     const defaultChapter = await prisma.chapter.findFirst({
       where: { name: "Calgary" }
     });
 
-    // Create new event with hard-coded values
     const newEvent = await prisma.event.create({
       data: {
         name: `${lastSaturday.toLocaleString('default', { month: 'long' })} ${lastSaturday.getDate()} - Project-based Mini-Hackathon`,
@@ -43,6 +39,6 @@ export async function checkAndCreateEvent(year: number, month: number): Promise<
     console.log(`Created new event for ${lastSaturday.toDateString()}:`, newEvent.id);
   } catch (error) {
     console.error('Error checking/creating event:', error);
-    throw error; // Re-throw so the API route can handle it
+    throw error;
   }
 }
