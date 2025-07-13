@@ -20,6 +20,8 @@ export default function NewEventModal({
   const { handleSubmit, register } = useForm<createEventInput>();
   const utils = api.useContext();
 
+  const { data: chapters } = api.chapters.getAll.useQuery();
+
   const cancelButtonRef = useRef(null);
   const { mutateAsync: createEvent } = api.events.create.useMutation({
     onSuccess: async () => {
@@ -32,6 +34,7 @@ export default function NewEventModal({
     await createEvent({
       ...data,
       date: new Date(data.date),
+      chapterId: data.chapterId || null,
     });
   };
 
@@ -89,6 +92,28 @@ export default function NewEventModal({
                               autoComplete="name"
                               className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm"
                             />
+                          </div>
+
+                          <div className="col-span-6 sm:col-span-3 ">
+                            <label
+                              htmlFor="chapterId"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Chapter
+                            </label>
+                            <select
+                              id="chapterId"
+                              {...register("chapterId", {
+                              })}
+                              className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:boder-gray-500 focus:ring-gray-500 sm:text-sm"
+                            >
+                              <option value="">Select a chapter...</option>
+                              {chapters?.map((chapter) => (
+                                <option key={chapter.id} value={chapter.id}>
+                                  {chapter.name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <div className="col-span-6 sm:col-span-3 ">
