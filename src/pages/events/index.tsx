@@ -13,9 +13,19 @@ import { useIsUserEditor } from "@/hooks/useIsUserEditor";
 import useUserSession from "@/hooks/useUserSession";
 import { api } from "@/utils/api";
 import React, { useState } from "react";
-import { Tabs, TabList, TabPanels, Tab, TabPanel, ChakraProvider } from "@chakra-ui/react";
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  ChakraProvider,
+} from "@chakra-ui/react";
 import EventCard from "./EventCard";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+
+const POLL_INTERVAL =
+  Number(process.env.NEXT_PUBLIC_EVENTS_POLL_INTERVAL_MS) || 10_000;
 
 export default function EventsPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,26 +45,21 @@ export default function EventsPage() {
   // Note: chapterId! is safe here because `enabled` condition ensures chapterId is defined when the query runs.
   const eventsByChapterQuery = api.events.getAllByChapter.useQuery(
     { chapterId: chapterId },
-    { enabled: isReady && !!chapterId }
+    { enabled: isReady && !!chapterId, refetchInterval: POLL_INTERVAL }
   );
 
   // Fetch all events if chapterId is NOT present
-  const allEventsQuery = api.events.getAll.useQuery(
-    undefined,
-    { enabled: isReady && !chapterId } 
-  );
+  const allEventsQuery = api.events.getAll.useQuery(undefined, {
+    enabled: isReady && !chapterId,
+    refetchInterval: POLL_INTERVAL,
+  });
 
   if (!isReady) {
     return <StyledCircleLoader isLoading={true} />;
   }
 
   const currentQuery = chapterId ? eventsByChapterQuery : allEventsQuery;
-  const {
-    data: events = [],
-    isLoading,
-    isError,
-    error,
-  } = currentQuery;
+  const { data: events = [], isLoading, isError, error } = currentQuery;
 
   const now = new Date();
   now.setHours(now.getHours() - 24);
@@ -69,7 +74,7 @@ export default function EventsPage() {
 
   return (
     <ChakraProvider>
-      <div className="bg-white px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
+      <div className="bg-white px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pb-28 lg:pt-24">
         <NewEventModal isOpen={isOpen} setIsOpen={setIsOpen} />
         {userIsEditor && user && (
           <div className="flex flex-row items-center justify-end">

@@ -29,6 +29,7 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_EVENTS_POLL_INTERVAL_MS: z.coerce.number().optional(),
 });
 
 /**
@@ -45,6 +46,8 @@ const processEnv = {
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  NEXT_PUBLIC_EVENTS_POLL_INTERVAL_MS:
+    process.env.NEXT_PUBLIC_EVENTS_POLL_INTERVAL_MS,
 };
 
 // Don't touch the part below
